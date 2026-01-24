@@ -51,6 +51,7 @@
 - Reloaded persisted study progress on re-entry to keep session progress in sync.
 - Load persisted progress on each study render once card data is available.
 - Switched study progress tracking to array-based lists for reliable reactivity.
+- Removed study progress debug logging.
 - Delayed progress load until card map is ready to avoid clearing saved progress.
 
 ## Routes

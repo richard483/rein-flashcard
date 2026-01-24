@@ -24,6 +24,9 @@
 	let initializedDeckId = '';
 	let initializedCount = 0;
 
+	$: if (browser && deckId && cardMap.size > 0) {
+		loadProgress();
+	}
 	$: deckName = $page.data.deck?.name ?? 'JLPT N5 Core';
 	$: deckId = $page.data.deck?.id ?? $page.url.searchParams.get('deck') ?? '';
 	$: cardCount = $page.data.cards.length;
@@ -37,9 +40,6 @@
 	}
 	$: if (browser && deckId && cardCount > 0 && order.length === 0) {
 		resetSession();
-	}
-	$: if (browser && deckId && cardMap.size > 0) {
-		loadProgress();
 	}
 	$: {
 		if (cardCount > 0) {
