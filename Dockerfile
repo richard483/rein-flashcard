@@ -6,7 +6,7 @@ RUN npm ci
 FROM node:24.13-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY ./svelte-kit/tsconfig.json ./svelte-kit/tsconfig.json
+COPY svelte-kit/tsconfig.json ./svelte-kit/tsconfig.json
 COPY . .
 RUN npm run build
 
