@@ -1,12 +1,12 @@
-import { PRIVATE_DB_HOST, PRIVATE_DB_NAME, PRIVATE_DB_PASSWORD, PRIVATE_DB_PORT, PRIVATE_DB_USER } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { Pool } from 'pg';
 
 export const pool = new Pool({
-	host: PRIVATE_DB_HOST,
-	port: Number(PRIVATE_DB_PORT || 5432),
-	database: PRIVATE_DB_NAME,
-	user: PRIVATE_DB_USER,
-	password: PRIVATE_DB_PASSWORD,
+	host: env.PRIVATE_DB_HOST,
+	port: Number(env.PRIVATE_DB_PORT || 5432),
+	database: env.PRIVATE_DB_NAME,
+	user: env.PRIVATE_DB_USER,
+	password: env.PRIVATE_DB_PASSWORD,
 	max: 10
 });
 

@@ -59,6 +59,7 @@
 - Switched auth env loading to dynamic private env for Docker builds.
 - Added `npm run prepare` in Docker build to generate `.svelte-kit` before build.
 - Restored `.svelte-kit` to `.dockerignore`.
+- Switched DB env loading to dynamic private env for Docker/Kubernetes builds.
 
 ## Routes
 
