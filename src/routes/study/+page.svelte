@@ -13,6 +13,12 @@
 	let mainIndex = 0;
 	let stash: string[] = [];
 	let cardMap = new Map<string, (typeof $page.data.cards)[number]>();
+	let easyIdsList: string[] = [];
+	let hardIdsList: string[] = [];
+	let easyIdsSet = new Set<string>();
+	let hardIdsSet = new Set<string>();
+	let activeId: string | null = null;
+	let currentCard: (typeof $page.data.cards)[number] | null = null;
 
 	const stateVersion = 1;
 	let initializedDeckId = '';
@@ -22,25 +28,32 @@
 	$: deckId = $page.data.deck?.id ?? $page.url.searchParams.get('deck') ?? '';
 	$: cardCount = $page.data.cards.length;
 	$: cardMap = new Map($page.data.cards.map((card) => [card.id, card]));
-	$: activeId =
-		sessionPhase === 'main'
-			? order[mainIndex] ?? null
-			: sessionPhase === 'stash'
-				? stash[0] ?? null
-				: null;
-	$: currentCard = activeId ? cardMap.get(activeId) ?? null : null;
-	$: completedCount = Math.min(completedCount, cardCount);
+	$: easyIdsSet = new Set(easyIdsList);
+	$: hardIdsSet = new Set(hardIdsList);
+	$: completedCount = Math.min(easyIdsList.length, cardCount);
 
 	$: if (browser && deckId && cardCount > 0) {
 		initializeSession();
 	}
-
 	$: if (browser && deckId && cardCount > 0 && order.length === 0) {
 		resetSession();
 	}
-
-	$: if (browser && deckId && cardCount > 0) {
-		initializeSession();
+	$: if (browser && deckId && cardMap.size > 0) {
+		loadProgress();
+	}
+	$: {
+		if (cardCount > 0) {
+			sessionPhase;
+			order;
+			mainIndex;
+			stash;
+			cardMap;
+			updateActiveCard();
+		}
+	}
+	$: if (browser && deckId && cardCount > 0 && order.length > 0 && !currentCard && sessionPhase !== 'done') {
+		mainIndex = 0;
+		sessionPhase = 'main';
 	}
 
 	type StudyState = {
@@ -48,8 +61,13 @@
 		order: string[];
 		mainIndex: number;
 		stash: string[];
-		completedCount: number;
 		sessionPhase: 'main' | 'stash' | 'done';
+	};
+
+	type ProgressState = {
+		version: number;
+		easyIds: string[];
+		hardIds: string[];
 	};
 
 	function initializeSession() {
@@ -74,10 +92,16 @@
 			order = sanitizeOrder(normalized.order);
 			mainIndex = normalized.mainIndex;
 			stash = sanitizeStash(normalized.stash);
-			completedCount = normalized.completedCount;
 			sessionPhase = normalized.sessionPhase;
+			skipEasyCards();
 			saveState();
-			if (resolveActiveId() && (currentCard || sessionPhase === 'done')) {
+			const candidateId =
+				sessionPhase === 'main'
+					? order[mainIndex] ?? null
+					: sessionPhase === 'stash'
+						? stash[0] ?? null
+						: null;
+			if (candidateId && (currentCard || sessionPhase === 'done')) {
 				return;
 			}
 		}
@@ -86,8 +110,8 @@
 		order = sanitizeOrder(shuffled);
 		mainIndex = 0;
 		stash = [];
-		completedCount = 0;
 		sessionPhase = 'main';
+		skipEasyCards();
 		saveState();
 	}
 
@@ -111,7 +135,6 @@
 		let nextPhase = stored.sessionPhase;
 		let nextMainIndex = stored.mainIndex;
 		let nextStash = [...stored.stash];
-		let nextCompleted = Math.min(stored.completedCount, cardCount);
 
 		if (nextMainIndex < 0) {
 			nextMainIndex = 0;
@@ -128,7 +151,6 @@
 			...stored,
 			mainIndex: nextMainIndex,
 			stash: nextStash,
-			completedCount: nextCompleted,
 			sessionPhase: nextPhase
 		};
 	}
@@ -146,6 +168,31 @@
 		return list.filter((id) => cardMap.has(id));
 	}
 
+	function updateActiveCard() {
+		activeId =
+			sessionPhase === 'main'
+				? order[mainIndex] ?? null
+				: sessionPhase === 'stash'
+					? stash[0] ?? null
+					: null;
+		currentCard = activeId ? cardMap.get(activeId) ?? null : null;
+	}
+
+	function skipEasyCards() {
+		if (sessionPhase !== 'main' || order.length === 0) {
+			return;
+		}
+		let nextIndex = mainIndex;
+		while (nextIndex < order.length && easyIdsSet.has(order[nextIndex])) {
+			nextIndex += 1;
+		}
+		if (nextIndex !== mainIndex) {
+			mainIndex = nextIndex;
+			advancePhaseIfNeeded();
+			saveState();
+		}
+	}
+
 
 	function handleHard() {
 		if (!currentCard) {
@@ -153,13 +200,20 @@
 			return;
 		}
 		if (sessionPhase === 'main') {
+			if (!hardIdsSet.has(currentCard.id)) {
+				hardIdsList = [...hardIdsList, currentCard.id];
+				saveProgress();
+			}
 			if (!stash.includes(currentCard.id)) {
 				stash = [...stash, currentCard.id];
 			}
 			mainIndex += 1;
 			advancePhaseIfNeeded();
+			skipEasyCards();
+			updateActiveCard();
 		} else if (sessionPhase === 'stash') {
 			stash = stash.length > 1 ? [...stash.slice(1), stash[0]] : stash;
+			updateActiveCard();
 		}
 		flipped = false;
 		saveState();
@@ -170,28 +224,28 @@
 			resetSession();
 			return;
 		}
+		if (!easyIdsSet.has(currentCard.id)) {
+			easyIdsList = [...easyIdsList, currentCard.id];
+			saveProgress();
+		}
+		if (hardIdsSet.has(currentCard.id)) {
+			hardIdsList = hardIdsList.filter((id) => id !== currentCard.id);
+			saveProgress();
+		}
 		if (sessionPhase === 'main') {
-			completedCount += 1;
 			mainIndex += 1;
 			advancePhaseIfNeeded();
+			skipEasyCards();
+			updateActiveCard();
 		} else if (sessionPhase === 'stash') {
-			completedCount += 1;
 			stash = stash.slice(1);
 			if (stash.length === 0) {
 				sessionPhase = 'done';
 			}
+			updateActiveCard();
 		}
 		flipped = false;
 		saveState();
-	}
-
-	function handleForceReset() {
-		if (browser && deckId) {
-			localStorage.removeItem(stateKey());
-		}
-		initializedDeckId = '';
-		initializedCount = 0;
-		resetSession();
 	}
 
 	function advancePhaseIfNeeded() {
@@ -208,9 +262,10 @@
 		order = sanitizeOrder($page.data.cards.map((card) => card.id));
 		mainIndex = 0;
 		stash = [];
-		completedCount = 0;
 		sessionPhase = 'main';
 		flipped = false;
+		skipEasyCards();
+		updateActiveCard();
 		saveState();
 	}
 
@@ -238,14 +293,55 @@
 			order,
 			mainIndex,
 			stash,
-			completedCount,
 			sessionPhase
 		};
 		localStorage.setItem(stateKey(), JSON.stringify(payload));
 	}
 
+	function loadProgress() {
+		if (!browser || !deckId) {
+			return;
+		}
+		const raw = localStorage.getItem(progressKey());
+		if (!raw) {
+			easyIdsList = [];
+			hardIdsList = [];
+			return;
+		}
+		try {
+			const parsed = JSON.parse(raw) as ProgressState;
+			if (parsed.version !== stateVersion) {
+				easyIdsList = [];
+				hardIdsList = [];
+				return;
+			}
+			const ids = new Set(cardMap.keys());
+			easyIdsList = ids.size ? parsed.easyIds.filter((id) => ids.has(id)) : parsed.easyIds;
+			hardIdsList = ids.size ? parsed.hardIds.filter((id) => ids.has(id)) : parsed.hardIds;
+		} catch {
+			easyIdsList = [];
+			hardIdsList = [];
+		}
+	}
+
+	function saveProgress() {
+		if (!browser || !deckId) {
+			return;
+		}
+		const payload: ProgressState = {
+			version: stateVersion,
+			easyIds: easyIdsList,
+			hardIds: hardIdsList
+		};
+		localStorage.setItem(progressKey(), JSON.stringify(payload));
+	}
+
 	function stateKey() {
 		return `study_state_${deckId}`;
+	}
+
+	function progressKey() {
+		return `study_progress_${deckId}`;
 	}
 
 	function shuffle(list: string[]) {
@@ -276,22 +372,6 @@
 		goto('/decks');
 	}
 
-	function debugState() {
-		return {
-			deckId,
-			cardCount,
-			mainIndex,
-			orderLength: order.length,
-			orderFirst: order[0] ?? null,
-			orderAtIndex: order[mainIndex] ?? null,
-			cardFirst: $page.data.cards[0]?.id ?? null,
-			currentCardId: currentCard?.id ?? null,
-			activeId,
-			mapSize: cardMap.size,
-			sessionPhase,
-			stashCount: stash.length
-		};
-	}
 </script>
 
 <div class="mx-auto flex min-h-screen w-full max-w-md flex-col overflow-x-hidden bg-[#101922] text-white shadow-2xl">
@@ -319,10 +399,13 @@
 	<div class="flex flex-col gap-2 px-6 py-2">
 		<div class="flex items-end justify-between">
 			<span class="text-xs font-medium uppercase tracking-wider text-slate-400">Session Progress</span>
-			<span class="text-sm font-bold text-[#137fec]">{completedCount}/{cardCount}</span>
+			<span class="text-sm font-bold text-green-400">{completedCount}/{cardCount}</span>
 		</div>
 		<div class="h-3 w-full overflow-hidden rounded-full bg-slate-800">
-			<div class="h-full rounded-full bg-[#137fec]" style={`width: ${progressWidth()}%;`}></div>
+			<div
+				class="h-full rounded-full bg-green-500 transition-[width] duration-300"
+				style={`width: ${progressWidth()}%;`}
+			></div>
 		</div>
 		{#if stash.length > 0 && sessionPhase !== 'done'}
 			<p class="text-xs text-slate-500">Stash queued: {stash.length}</p>
@@ -372,19 +455,13 @@
 			</div>
 		{:else}
 			{#if !currentCard}
-				<div class="rounded-2xl border border-slate-700 bg-[#15202b] p-6 text-center">
-					<p class="text-sm font-semibold text-slate-200">Session needs a reset</p>
-					<p class="mt-2 text-xs text-slate-400">We could not resolve the next card.</p>
-					<button
-						class="mt-4 inline-flex items-center justify-center rounded-full bg-[#137fec] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-600"
-						type="button"
-						on:click={handleForceReset}
+				<div class="relative w-full max-h-[500px] aspect-[4/5]">
+					<div
+						class="relative flex h-full w-full flex-col items-center justify-center rounded-3xl border border-slate-700 bg-[#15202b] p-8 text-center"
 					>
-						Rebuild session
-					</button>
-					<pre class="mt-4 text-left text-[11px] leading-relaxed text-slate-400">
-{JSON.stringify(debugState(), null, 2)}
-					</pre>
+						<p class="text-sm font-semibold text-slate-200">Loading card...</p>
+						<p class="mt-2 text-xs text-slate-400">Please wait a moment.</p>
+					</div>
 				</div>
 			{:else}
 				<button
@@ -403,16 +480,14 @@
 						<div class="flex flex-1 flex-col items-center justify-center gap-6">
 							{#if flipped}
 								<h1 class="mt-4 text-4xl font-extrabold text-slate-900">
-									{currentCard?.back_text}
+									{currentCard.back_text}
 								</h1>
-								{#if currentCard?.reading_text}
-									<p class="text-lg font-medium text-[#137fec]">
-										{currentCard.reading_text}
-									</p>
+								{#if currentCard.reading_text}
+									<p class="text-lg font-medium text-[#137fec]">{currentCard.reading_text}</p>
 								{/if}
 							{:else}
 								<h1 class="mt-4 text-6xl font-extrabold text-slate-900">
-									{currentCard?.front_text}
+									{currentCard.front_text}
 								</h1>
 								<p class="text-lg text-slate-400">Tap to reveal</p>
 							{/if}

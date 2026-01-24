@@ -34,17 +34,24 @@
 - Fixed study session init to wait for deck data before building the shuffled order.
 - Improved study session initialization to recover from empty or mismatched state.
 - Added automatic session reset when no current card is resolved.
-- Added manual session rebuild UI when no card can be resolved.
 - Use deck id from server data first when building study session state.
-- Added display fallback to show first card when state mismatches occur.
 - Reworked study session card resolution to always map by id and avoid stale fallback.
-- Added debug panel for study session when no card can be resolved.
 - Added self-healing for missing card ids in study session order or stash.
 - Removed auto-reset loop to allow manual rebuild and proper card progression.
 - Sanitized stored order against current card ids and ensured a visible progress bar.
 - Refactored study session to use an explicit id map and cleanly resolve active cards.
 - Relaxed study-session card resolution to rely on order/stash even if deck data is late.
 - Fixed reactive card resolution by inlining active card selection.
+- Removed stale resolveActiveId reference and added loading state for initial study card.
+- Persisted easy/hard progress in localStorage and surfaced progress on deck list.
+- Switched study progress bar to green and animated width changes.
+- Removed reactive skip-easy loop to fix Svelte reactive cycle on study page.
+- Broke study card derivation into an explicit update function to avoid reactive cycles.
+- Ensured active card updates when order/index changes for immediate card rendering.
+- Reloaded persisted study progress on re-entry to keep session progress in sync.
+- Load persisted progress on each study render once card data is available.
+- Switched study progress tracking to array-based lists for reliable reactivity.
+- Delayed progress load until card map is ready to avoid clearing saved progress.
 
 ## Routes
 

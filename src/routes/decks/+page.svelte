@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
 
 	let isLoggingOut = false;
+	let progressById: Record<string, number> = {};
 
 	async function handleLogout() {
 		isLoggingOut = true;
@@ -43,6 +46,37 @@
 		if (response.ok) {
 			await invalidateAll();
 		}
+	}
+
+	function loadProgress() {
+		if (!browser) {
+			return;
+		}
+		const progress: Record<string, number> = {};
+		for (const deck of $page.data.decks) {
+			const raw = localStorage.getItem(`study_progress_${deck.id}`);
+			if (!raw) {
+				progress[deck.id] = 0;
+				continue;
+			}
+			try {
+				const parsed = JSON.parse(raw) as { easyIds?: string[] };
+				const easyCount = parsed.easyIds?.length ?? 0;
+				const percent = deck.card_count > 0 ? Math.round((easyCount / deck.card_count) * 100) : 0;
+				progress[deck.id] = Math.min(100, Math.max(0, percent));
+			} catch {
+				progress[deck.id] = 0;
+			}
+		}
+		progressById = progress;
+	}
+
+	onMount(() => {
+		loadProgress();
+	});
+
+	$: if (browser) {
+		loadProgress();
 	}
 </script>
 
@@ -118,9 +152,14 @@
 							</div>
 							<div class="mt-4 flex items-center gap-3">
 								<div class="h-2 flex-1 overflow-hidden rounded-full bg-slate-800">
-									<div class="h-full rounded-full bg-[#137fec]" style="width: 0%;"></div>
+									<div
+										class="h-full rounded-full bg-green-500 transition-[width] duration-300"
+										style={`width: ${progressById[deck.id] ?? 0}%;`}
+									></div>
 								</div>
-								<span class="text-sm font-medium text-[#137fec]">0%</span>
+								<span class="text-sm font-medium text-green-400"
+									>{progressById[deck.id] ?? 0}%</span
+								>
 							</div>
 						</a>
 						<div class="flex items-center gap-2 px-5 pb-5">
