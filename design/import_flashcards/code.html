@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Import Flashcards</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased overflow-x-hidden min-h-screen flex flex-col">
+<!-- Top App Bar -->
+<div class="sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center p-2 -ml-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-900 dark:text-white">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold leading-tight tracking-tight">Import Flashcards</h1>
+</div>
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-900 dark:text-white">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+<!-- Scrollable Content -->
+<main class="flex-1 flex flex-col p-4 gap-6 max-w-lg mx-auto w-full">
+<!-- Upload Zone -->
+<div class="flex flex-col">
+<div class="relative flex flex-col items-center justify-center gap-6 rounded-xl border-2 border-dashed border-primary/40 dark:border-primary/30 bg-white dark:bg-[#15202b] px-6 py-12 transition-all hover:border-primary/70 hover:bg-slate-50 dark:hover:bg-[#1a2633] cursor-pointer group">
+<div class="flex flex-col items-center gap-3 text-center">
+<div class="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 dark:bg-primary/20 text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[32px]">cloud_upload</span>
+</div>
+<div class="space-y-1">
+<p class="text-base font-bold text-slate-900 dark:text-white">Upload CSV</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Tap to browse or drag CSV file here</p>
+</div>
+</div>
+<button class="flex items-center justify-center h-10 px-6 rounded-lg bg-primary text-white text-sm font-bold shadow-sm hover:bg-primary/90 transition-colors pointer-events-none">
+                    Select File
+                </button>
+</div>
+</div>
+<!-- Format Instructions Panel -->
+<div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#15202b] p-5 shadow-sm">
+<div class="flex flex-col gap-4">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5">info</span>
+<div class="flex flex-col gap-1">
+<p class="text-base font-bold text-slate-900 dark:text-white">Formatting Requirements</p>
+<p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                            Your CSV must have 3 columns in this exact order:
+                        </p>
+<ul class="text-sm text-slate-500 dark:text-slate-400 list-disc list-inside mt-1 ml-1 space-y-1">
+<li>Column 1: <strong>Word</strong> (Kanji)</li>
+<li>Column 2: <strong>Reading</strong> (Kana)</li>
+<li>Column 3: <strong>Meaning</strong> (English)</li>
+</ul>
+</div>
+</div>
+<div class="h-px bg-slate-100 dark:bg-slate-700 w-full"></div>
+<a class="flex items-center justify-between text-sm font-bold text-primary hover:text-primary/80 transition-colors group" href="#">
+<span>Download Sample CSV</span>
+<span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Main Import Action -->
+<button class="w-full flex items-center justify-center h-12 px-6 rounded-xl bg-primary text-white text-base font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-[0.98] transition-all">
+            Import File
+        </button>
+<!-- Recent Imports Section -->
+<div class="flex flex-col gap-3 pt-2">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white px-1">Recent Imports</h3>
+<div class="flex flex-col gap-2">
+<!-- Recent Item 1 -->
+<div class="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-[#15202b] border border-slate-100 dark:border-slate-800/50 shadow-sm">
+<div class="flex items-center justify-center w-10 h-10 rounded-lg bg-green-500/10 text-green-600 dark:text-green-400 shrink-0">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<p class="text-sm font-bold text-slate-900 dark:text-white truncate">N5_Vocabulary.csv</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Oct 24, 2023</p>
+</div>
+<div class="flex items-center gap-1 text-green-600 dark:text-green-400 text-xs font-medium px-2 py-1 rounded-full bg-green-500/10">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Success</span>
+</div>
+</div>
+<!-- Recent Item 2 -->
+<div class="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-[#15202b] border border-slate-100 dark:border-slate-800/50 shadow-sm">
+<div class="flex items-center justify-center w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 shrink-0">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<p class="text-sm font-bold text-slate-900 dark:text-white truncate">Core_2000_Words.csv</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Oct 18, 2023</p>
+</div>
+<div class="flex items-center gap-1 text-green-600 dark:text-green-400 text-xs font-medium px-2 py-1 rounded-full bg-green-500/10">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Success</span>
+</div>
+</div>
+<!-- Recent Item 3 (Error State Example) -->
+<div class="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-[#15202b] border border-slate-100 dark:border-slate-800/50 shadow-sm opacity-80">
+<div class="flex items-center justify-center w-10 h-10 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400 shrink-0">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<p class="text-sm font-bold text-slate-900 dark:text-white truncate">Verbs_Conjugation_Wrong.csv</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Oct 15, 2023</p>
+</div>
+<div class="flex items-center gap-1 text-red-600 dark:text-red-400 text-xs font-medium px-2 py-1 rounded-full bg-red-500/10">
+<span class="material-symbols-outlined text-[16px]">error</span>
+<span>Failed</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom spacer for safe scrolling -->
+<div class="h-12"></div>
+</main>
+</body></html>
