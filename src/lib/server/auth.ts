@@ -1,6 +1,6 @@
-import { PRIVATE_AUTH_BASE_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
-const baseUrl = (PRIVATE_AUTH_BASE_URL || 'http://222.222.1.104:30025').replace(/\/$/, '');
+const baseUrl = (env.PRIVATE_AUTH_BASE_URL || 'http://222.222.1.104:30025').replace(/\/$/, '');
 
 export type AuthApiResponse<T> = {
 	status: number;

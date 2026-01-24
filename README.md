@@ -55,6 +55,10 @@
 - Added multi-stage Dockerfile and .dockerignore for container builds.
 - Delayed progress load until card map is ready to avoid clearing saved progress.
 - Fixed a11y label associations and removed invalid href in login/import forms.
+- Removed erroneous Dockerfile copy of `.svelte-kit` tsconfig (generated at build time).
+- Switched auth env loading to dynamic private env for Docker builds.
+- Added `npm run prepare` in Docker build to generate `.svelte-kit` before build.
+- Restored `.svelte-kit` to `.dockerignore`.
 
 ## Routes
 
