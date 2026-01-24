@@ -52,6 +52,7 @@
 - Load persisted progress on each study render once card data is available.
 - Switched study progress tracking to array-based lists for reliable reactivity.
 - Removed study progress debug logging.
+- Added multi-stage Dockerfile and .dockerignore for container builds.
 - Delayed progress load until card map is ready to avoid clearing saved progress.
 
 ## Routes
