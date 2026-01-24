@@ -54,6 +54,7 @@
 - Removed study progress debug logging.
 - Added multi-stage Dockerfile and .dockerignore for container builds.
 - Delayed progress load until card map is ready to avoid clearing saved progress.
+- Fixed a11y label associations and removed invalid href in login/import forms.
 
 ## Routes
 

@@ -105,12 +105,13 @@
 
 		<form class="flex w-full flex-col gap-5" on:submit|preventDefault={handleSubmit}>
 			<div class="space-y-2">
-				<label class="ml-1 text-sm font-medium text-slate-300">Username</label>
+				<label class="ml-1 text-sm font-medium text-slate-300" for="username">Username</label>
 				<div class="relative flex items-center">
 					<span class="material-symbols-outlined absolute left-4 text-[20px] text-slate-400"
 						>mail</span
 					>
 					<input
+						id="username"
 						class="h-12 w-full rounded-lg border border-slate-700 bg-[#1c2936] pl-11 pr-4 text-base text-white placeholder-slate-500 transition-all focus:border-[#137fec] focus:outline-none focus:ring-2 focus:ring-[#137fec]/50"
 						placeholder="Enter your username"
 						type="text"
@@ -123,13 +124,14 @@
 
 			<div class="space-y-2">
 				<div class="ml-1 flex items-center justify-between">
-					<label class="text-sm font-medium text-slate-300">Password</label>
+					<label class="text-sm font-medium text-slate-300" for="password">Password</label>
 				</div>
 				<div class="relative flex items-center">
 					<span class="material-symbols-outlined absolute left-4 text-[20px] text-slate-400"
 						>lock</span
 					>
 					<input
+						id="password"
 						class="h-12 w-full rounded-lg border border-slate-700 bg-[#1c2936] pl-11 pr-12 text-base text-white placeholder-slate-500 transition-all focus:border-[#137fec] focus:outline-none focus:ring-2 focus:ring-[#137fec]/50"
 						placeholder="Enter your password"
 						type={showPassword ? 'text' : 'password'}
@@ -149,21 +151,27 @@
 				</div>
 				{#if mode === 'login'}
 					<div class="flex justify-end pt-1">
-						<a class="text-sm font-medium text-[#137fec] hover:text-blue-400" href="#"
-							>Forgot Password?</a
+						<button
+							class="text-sm font-medium text-[#137fec] hover:text-blue-400"
+							type="button"
 						>
+							Forgot Password?
+						</button>
 					</div>
 				{/if}
 			</div>
 
 			{#if mode === 'register'}
 				<div class="space-y-2">
-					<label class="ml-1 text-sm font-medium text-slate-300">Confirm Password</label>
+					<label class="ml-1 text-sm font-medium text-slate-300" for="confirmPassword"
+						>Confirm Password</label
+					>
 					<div class="relative flex items-center">
 						<span class="material-symbols-outlined absolute left-4 text-[20px] text-slate-400"
 							>lock</span
 						>
 						<input
+							id="confirmPassword"
 							class="h-12 w-full rounded-lg border border-slate-700 bg-[#1c2936] pl-11 pr-4 text-base text-white placeholder-slate-500 transition-all focus:border-[#137fec] focus:outline-none focus:ring-2 focus:ring-[#137fec]/50"
 							placeholder="Confirm your password"
 							type={showPassword ? 'text' : 'password'}

@@ -135,8 +135,9 @@
 
 	<main class="flex w-full max-w-lg flex-1 flex-col gap-6 p-4 mx-auto">
 		<div class="rounded-xl border border-slate-700 bg-[#15202b] p-5 shadow-sm">
-			<label class="text-sm font-semibold text-slate-300">Deck name</label>
+			<label class="text-sm font-semibold text-slate-300" for="deckName">Deck name</label>
 			<input
+				id="deckName"
 				class="mt-2 h-11 w-full rounded-lg border border-slate-700 bg-[#1c2936] px-4 text-sm text-white placeholder-slate-500 focus:border-[#137fec] focus:outline-none focus:ring-2 focus:ring-[#137fec]/50"
 				placeholder="e.g. JLPT N5 Core"
 				type="text"
