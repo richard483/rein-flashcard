@@ -16,6 +16,9 @@
 - Constrained DB query typing to pg rows and tightened deck/study card typings for checks.
 - Extracted shared empty-state panel and split study UI into smaller components.
 - Split login/import pages into reusable UI components and added shared message banner.
+- Switched login hero and favicon to the flashcard-mountain asset.
+- Generated a 32x32 favicon PNG from the mountain image and wired it in.
+- Removed unused `favicon.svg` asset.
 - Adjusted study session routing to read deck name from query string.
 - Added client-side password confirmation check on registration.
 - Added server-side auth guard to redirect unauthenticated users to `/login`.

@@ -1,9 +1,10 @@
 <script lang="ts">
+	import heroImage from '$lib/assets/flashcard-mountain.png';
+
 	export let brandName = 'FlashCard JP';
 	export let heading = 'Okaeri';
 	export let subheading = 'Master Japanese, one card at a time.';
-	export let backgroundUrl =
-		'https://lh3.googleusercontent.com/aida-public/AB6AXuC0fKQdFf733JKblJGceZMNwh4_nTcXvJxW8a1Y3xX5G7INdnrFoMEf4d105EmwV7Qdwv6pNrDDBREzOxYra8YDmj7GdwJJoeBj6gdIa_f9qf-avvCYRNXVg6OoJr3UziDZl5099LRzxN0lysrKA7twvp6OzekfRoxnmoyuxIB2PxDeYRd29frgiX-arWGu9ibGK3d3nYMpSTd7gHlmkZySmus_O7VZTY0VXUbeCJDmTK3xRKhZwvntJ8rj1L8X9UXsVn3VYOT9kR4';
+	export let backgroundUrl = heroImage;
 </script>
 
 <div class="relative z-10 px-4 pt-4 pb-2">
