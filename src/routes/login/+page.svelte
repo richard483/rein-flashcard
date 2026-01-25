@@ -199,7 +199,7 @@
 			</button>
 		</form>
 
-			<div class="mt-8 flex flex-col items-center gap-4">
+		<div class="mt-8 flex flex-col items-center gap-4">
 			<div class="flex w-full items-center gap-4">
 				<div class="h-px flex-1 bg-slate-700"></div>
 				<span class="text-xs font-medium uppercase tracking-wider text-slate-500"

@@ -1,16 +1,18 @@
 import { env } from '$env/dynamic/private';
-import { Pool } from 'pg';
+import { Pool, type QueryResultRow } from 'pg';
 
-export const pool = new Pool({
+const dbConfig = {
 	host: env.PRIVATE_DB_HOST,
 	port: Number(env.PRIVATE_DB_PORT || 5432),
 	database: env.PRIVATE_DB_NAME,
 	user: env.PRIVATE_DB_USER,
 	password: env.PRIVATE_DB_PASSWORD,
 	max: 10
-});
+};
 
-export async function query<T>(text: string, params: unknown[] = []) {
+export const pool = new Pool(dbConfig);
+
+export async function query<T extends QueryResultRow>(text: string, params: unknown[] = []) {
 	try {
 		const result = await pool.query<T>(text, params);
 		return result.rows;
@@ -20,10 +22,10 @@ export async function query<T>(text: string, params: unknown[] = []) {
 		console.error('DB query failed', {
 			message,
 			code,
-			host: PRIVATE_DB_HOST,
-			port: Number(PRIVATE_DB_PORT || 5432),
-			database: PRIVATE_DB_NAME,
-			user: PRIVATE_DB_USER
+			host: dbConfig.host,
+			port: dbConfig.port,
+			database: dbConfig.database,
+			user: dbConfig.user
 		});
 		throw error;
 	}

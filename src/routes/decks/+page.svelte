@@ -2,7 +2,6 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
-	import { onMount } from 'svelte';
 
 	let isLoggingOut = false;
 	let progressById: Record<string, number> = {};
@@ -48,12 +47,15 @@
 		}
 	}
 
-	function loadProgress() {
+	type DeckSummary = { id: string; name: string; card_count: number };
+	let decks: DeckSummary[] = [];
+
+	function loadProgress(decks: DeckSummary[]) {
 		if (!browser) {
 			return;
 		}
 		const progress: Record<string, number> = {};
-		for (const deck of $page.data.decks) {
+		for (const deck of decks) {
 			const raw = localStorage.getItem(`study_progress_${deck.id}`);
 			if (!raw) {
 				progress[deck.id] = 0;
@@ -71,12 +73,9 @@
 		progressById = progress;
 	}
 
-	onMount(() => {
-		loadProgress();
-	});
-
 	$: if (browser) {
-		loadProgress();
+		decks = $page.data.decks ?? [];
+		loadProgress(decks);
 	}
 </script>
 
@@ -125,7 +124,7 @@
 			</div>
 		</div>
 
-		{#if $page.data.decks.length === 0}
+		{#if decks.length === 0}
 			<div class="rounded-2xl border border-dashed border-slate-700 bg-[#15202b] p-6 text-center">
 				<p class="text-sm font-semibold text-slate-200">No decks yet</p>
 				<p class="mt-2 text-xs text-slate-400">
@@ -140,7 +139,7 @@
 			</div>
 		{:else}
 			<div class="flex flex-col gap-4">
-				{#each $page.data.decks as deck}
+				{#each decks as deck}
 					<div class="group relative overflow-hidden rounded-2xl border border-slate-800 bg-[#15202b] shadow-sm transition-all hover:shadow-md active:scale-[0.98]">
 						<a class="block p-5" href={`/study?deck=${deck.id}`}>
 							<div class="mb-2 flex items-start justify-between">

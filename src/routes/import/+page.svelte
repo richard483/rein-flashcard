@@ -12,6 +12,29 @@
 	let successMessage = '';
 	let isReady = false;
 
+	type DraftCard = { front: string; back: string; reading?: string };
+
+	function buildCards(rows: string[][]): DraftCard[] {
+		const cards: DraftCard[] = [];
+		for (const row of rows) {
+			const trimmed = row.map((cell) => cell.trim());
+			if (trimmed.length >= 3) {
+				const [front, reading, back] = trimmed;
+				if (front && back) {
+					cards.push({ front, reading: reading || undefined, back });
+				}
+				continue;
+			}
+			if (trimmed.length >= 2) {
+				const [front, back] = trimmed;
+				if (front && back) {
+					cards.push({ front, back });
+				}
+			}
+		}
+		return cards;
+	}
+
 	function handleFileChange(event: Event) {
 		const input = event.target as HTMLInputElement;
 		const file = input.files?.[0];
@@ -64,17 +87,7 @@
 			return;
 		}
 
-		const cards = parsedRows
-			.map((row) => {
-				if (row.length >= 3) {
-					return { front: row[0], reading: row[1], back: row[2] };
-				}
-				if (row.length >= 2) {
-					return { front: row[0], back: row[1] };
-				}
-				return null;
-			})
-			.filter(Boolean);
+		const cards = buildCards(parsedRows);
 
 		if (cards.length === 0) {
 			errorMessage = 'CSV needs at least two columns per row.';
@@ -83,13 +96,13 @@
 
 		try {
 			const response = await fetch('/api/decks', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				name: deckName.trim(),
-				cards,
-				sourceFile: fileName
-			})
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					name: deckName.trim(),
+					cards,
+					sourceFile: fileName
+				})
 			});
 			if (!response.ok) {
 				const payload = (await response.json()) as { message?: string };

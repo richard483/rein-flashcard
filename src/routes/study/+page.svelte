@@ -2,6 +2,9 @@
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import type { PageData } from './$types';
+
+	type StudyCard = NonNullable<PageData['cards']>[number];
 
 	let flipped = false;
 	let deckName = 'JLPT N5 Core';
@@ -12,13 +15,14 @@
 	let order: string[] = [];
 	let mainIndex = 0;
 	let stash: string[] = [];
-	let cardMap = new Map<string, (typeof $page.data.cards)[number]>();
+	let cards: StudyCard[] = [];
+	let cardMap = new Map<string, StudyCard>();
 	let easyIdsList: string[] = [];
 	let hardIdsList: string[] = [];
 	let easyIdsSet = new Set<string>();
 	let hardIdsSet = new Set<string>();
 	let activeId: string | null = null;
-	let currentCard: (typeof $page.data.cards)[number] | null = null;
+	let currentCard: StudyCard | null = null;
 
 	const stateVersion = 1;
 	let initializedDeckId = '';
@@ -29,8 +33,9 @@
 	}
 	$: deckName = $page.data.deck?.name ?? 'JLPT N5 Core';
 	$: deckId = $page.data.deck?.id ?? $page.url.searchParams.get('deck') ?? '';
-	$: cardCount = $page.data.cards.length;
-	$: cardMap = new Map($page.data.cards.map((card) => [card.id, card]));
+	$: cards = $page.data.cards ?? [];
+	$: cardCount = cards.length;
+	$: cardMap = new Map(cards.map((card) => [card.id, card]));
 	$: easyIdsSet = new Set(easyIdsList);
 	$: hardIdsSet = new Set(hardIdsList);
 	$: completedCount = Math.min(easyIdsList.length, cardCount);
@@ -106,7 +111,7 @@
 			}
 		}
 
-		const shuffled = shuffle($page.data.cards.map((card) => card.id));
+		const shuffled = shuffle(cards.map((card) => card.id));
 		order = sanitizeOrder(shuffled);
 		mainIndex = 0;
 		stash = [];
@@ -119,7 +124,7 @@
 		if (stored.version !== stateVersion) {
 			return false;
 		}
-		const ids = new Set($page.data.cards.map((card) => card.id));
+		const ids = new Set(cards.map((card) => card.id));
 		if (stored.order.length !== ids.size) {
 			return false;
 		}
@@ -195,17 +200,18 @@
 
 
 	function handleHard() {
-		if (!currentCard) {
+		const card = currentCard;
+		if (!card) {
 			resetSession();
 			return;
 		}
 		if (sessionPhase === 'main') {
-			if (!hardIdsSet.has(currentCard.id)) {
-				hardIdsList = [...hardIdsList, currentCard.id];
+			if (!hardIdsSet.has(card.id)) {
+				hardIdsList = [...hardIdsList, card.id];
 				saveProgress();
 			}
-			if (!stash.includes(currentCard.id)) {
-				stash = [...stash, currentCard.id];
+			if (!stash.includes(card.id)) {
+				stash = [...stash, card.id];
 			}
 			mainIndex += 1;
 			advancePhaseIfNeeded();
@@ -220,16 +226,17 @@
 	}
 
 	function handleEasy() {
-		if (!currentCard) {
+		const card = currentCard;
+		if (!card) {
 			resetSession();
 			return;
 		}
-		if (!easyIdsSet.has(currentCard.id)) {
-			easyIdsList = [...easyIdsList, currentCard.id];
+		if (!easyIdsSet.has(card.id)) {
+			easyIdsList = [...easyIdsList, card.id];
 			saveProgress();
 		}
-		if (hardIdsSet.has(currentCard.id)) {
-			hardIdsList = hardIdsList.filter((id) => id !== currentCard.id);
+		if (hardIdsSet.has(card.id)) {
+			hardIdsList = hardIdsList.filter((id) => id !== card.id);
 			saveProgress();
 		}
 		if (sessionPhase === 'main') {
@@ -259,7 +266,7 @@
 	}
 
 	function resetSession() {
-		order = sanitizeOrder($page.data.cards.map((card) => card.id));
+		order = sanitizeOrder(cards.map((card) => card.id));
 		mainIndex = 0;
 		stash = [];
 		sessionPhase = 'main';

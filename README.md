@@ -9,6 +9,11 @@
 
 ## Progress log
 
+- Refactored CSV import card parsing into a helper and cleaned up the fetch payload formatting.
+- Simplified deck progress reload logic to depend only on deck data changes.
+- Fixed DB query error logging to use the configured env values safely.
+- Added pg type definitions and tightened deck/study page typing fallbacks for svelte-check.
+- Constrained DB query typing to pg rows and tightened deck/study card typings for checks.
 - Adjusted study session routing to read deck name from query string.
 - Added client-side password confirmation check on registration.
 - Added server-side auth guard to redirect unauthenticated users to `/login`.
