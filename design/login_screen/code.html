@@ -1,143 +1,205 @@
-<!DOCTYPE html>
+<!doctype html>
 
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Login - FlashCard JP</title>
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<!-- Material Symbols -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<!-- Theme Configuration -->
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#137fec",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#101922",
-                        "surface-dark": "#1c2936",
-                        "surface-light": "#ffffff",
-                    },
-                    fontFamily: {
-                        "display": ["Lexend", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem", 
-                        "lg": "0.5rem", 
-                        "xl": "0.75rem", 
-                        "full": "9999px"
-                    },
-                },
-            },
-        }
-    </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings:
-            'FILL' 1,
-            'wght' 400,
-            'GRAD' 0,
-            'opsz' 24
-        }
-        /* Hide scrollbar for clean mobile look */
-        ::-webkit-scrollbar {
-            width: 0px;
-            background: transparent;
-        }
-    </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
-  </head>
-<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased transition-colors duration-200">
-<div class="relative flex h-full min-h-screen w-full flex-col overflow-hidden max-w-md mx-auto shadow-2xl">
-<!-- Decorative Background Pattern -->
-<div class="absolute top-0 left-0 w-full h-[300px] z-0 opacity-20 pointer-events-none" style="background: radial-gradient(circle at 50% 0%, #137fec 0%, transparent 60%);">
-</div>
-<!-- Header Image -->
-<div class="relative z-10 px-4 pt-4 pb-2">
-<div class="w-full h-48 rounded-xl bg-center bg-cover bg-no-repeat shadow-lg overflow-hidden relative group" data-alt="Peaceful Japanese minimalist landscape with Mount Fuji and cherry blossoms at sunset" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC0fKQdFf733JKblJGceZMNwh4_nTcXvJxW8a1Y3xX5G7INdnrFoMEf4d105EmwV7Qdwv6pNrDDBREzOxYra8YDmj7GdwJJoeBj6gdIa_f9qf-avvCYRNXVg6OoJr3UziDZl5099LRzxN0lysrKA7twvp6OzekfRoxnmoyuxIB2PxDeYRd29frgiX-arWGu9ibGK3d3nYMpSTd7gHlmkZySmus_O7VZTY0VXUbeCJDmTK3xRKhZwvntJ8rj1L8X9UXsVn3VYOT9kR4");'>
-<div class="absolute inset-0 bg-gradient-to-t from-background-dark/80 to-transparent"></div>
-<div class="absolute bottom-4 left-4 flex items-center gap-2">
-<span class="material-symbols-outlined text-white text-3xl">style</span>
-<span class="text-white font-bold text-lg tracking-wide opacity-90">FlashCard JP</span>
-</div>
-</div>
-</div>
-<!-- Main Content -->
-<div class="relative z-10 flex flex-col px-6 pt-4 pb-8 flex-1">
-<!-- Headline -->
-<div class="text-center mb-8">
-<h1 class="text-3xl font-bold tracking-tight mb-2 dark:text-white text-slate-900">Okaeri</h1>
-<p class="text-slate-500 dark:text-slate-400 text-base font-normal">Master Japanese, one card at a time.</p>
-</div>
-<!-- Form -->
-<form class="flex flex-col gap-5 w-full" onsubmit="event.preventDefault();">
-<!-- Email Field -->
-<div class="space-y-2">
-<label class="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Email</label>
-<div class="relative flex items-center">
-<span class="absolute left-4 text-slate-400 material-symbols-outlined text-[20px]">mail</span>
-<input class="w-full h-12 bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-lg pl-11 pr-4 text-base focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary placeholder-slate-400 dark:placeholder-slate-500 text-slate-900 dark:text-white transition-all" placeholder="Enter your email" type="email"/>
-</div>
-</div>
-<!-- Password Field -->
-<div class="space-y-2">
-<div class="flex justify-between items-center ml-1">
-<label class="text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
-</div>
-<div class="relative flex items-center">
-<span class="absolute left-4 text-slate-400 material-symbols-outlined text-[20px]">lock</span>
-<input class="w-full h-12 bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-lg pl-11 pr-12 text-base focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary placeholder-slate-400 dark:placeholder-slate-500 text-slate-900 dark:text-white transition-all" placeholder="Enter your password" type="password"/>
-<button class="absolute right-3 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center" type="button">
-<span class="material-symbols-outlined text-[20px]">visibility_off</span>
-</button>
-</div>
-<div class="flex justify-end pt-1">
-<a class="text-sm font-medium text-primary hover:text-blue-400 transition-colors" href="#">Forgot Password?</a>
-</div>
-</div>
-<!-- Sign In Button -->
-<button class="w-full h-12 mt-2 bg-primary hover:bg-blue-600 active:bg-blue-700 text-white font-semibold rounded-lg shadow-lg shadow-primary/25 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
-<span>Sign In</span>
-<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
-</button>
-</form>
-<!-- Social Login -->
-<div class="mt-8 flex flex-col items-center gap-4">
-<div class="flex items-center w-full gap-4">
-<div class="h-px bg-slate-200 dark:bg-slate-700 flex-1"></div>
-<span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Or continue with</span>
-<div class="h-px bg-slate-200 dark:bg-slate-700 flex-1"></div>
-</div>
-<div class="flex gap-4 w-full">
-<button class="flex-1 h-12 bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-lg flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-[#253646] transition-colors group">
-<!-- Simulated Google G with text since SVG paths are avoided in component list usually, but standard text is safer here -->
-<span class="text-slate-700 dark:text-slate-200 font-medium group-hover:text-primary transition-colors">Google</span>
-</button>
-<button class="flex-1 h-12 bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-lg flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-[#253646] transition-colors group">
-<!-- Simulated Apple with text -->
-<span class="text-slate-700 dark:text-slate-200 font-medium group-hover:text-primary transition-colors">Apple</span>
-</button>
-</div>
-</div>
-<!-- Footer -->
-<div class="mt-auto pt-8 text-center">
-<p class="text-sm text-slate-500 dark:text-slate-400">
-                    Don't have an account? 
-                    <a class="font-semibold text-primary hover:text-blue-400 ml-1" href="#">Sign Up</a>
-</p>
-</div>
-</div>
-</div>
-</body></html>
+<html class="dark" lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+		<title>Login - FlashCard JP</title>
+		<!-- Tailwind CSS -->
+		<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+		<!-- Google Fonts -->
+		<link href="https://fonts.googleapis.com" rel="preconnect" />
+		<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap"
+			rel="stylesheet"
+		/>
+		<!-- Material Symbols -->
+		<link
+			href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+			rel="stylesheet"
+		/>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+			rel="stylesheet"
+		/>
+		<!-- Theme Configuration -->
+		<script id="tailwind-config">
+			tailwind.config = {
+				darkMode: 'class',
+				theme: {
+					extend: {
+						colors: {
+							primary: '#137fec',
+							'background-light': '#f6f7f8',
+							'background-dark': '#101922',
+							'surface-dark': '#1c2936',
+							'surface-light': '#ffffff'
+						},
+						fontFamily: {
+							display: ['Lexend', 'sans-serif']
+						},
+						borderRadius: {
+							DEFAULT: '0.25rem',
+							lg: '0.5rem',
+							xl: '0.75rem',
+							full: '9999px'
+						}
+					}
+				}
+			};
+		</script>
+		<style>
+			.material-symbols-outlined {
+				font-variation-settings:
+					'FILL' 1,
+					'wght' 400,
+					'GRAD' 0,
+					'opsz' 24;
+			}
+			/* Hide scrollbar for clean mobile look */
+			::-webkit-scrollbar {
+				width: 0px;
+				background: transparent;
+			}
+		</style>
+		<style>
+			body {
+				min-height: max(884px, 100dvh);
+			}
+		</style>
+	</head>
+	<body
+		class="bg-background-light dark:bg-background-dark font-display text-slate-900 antialiased transition-colors duration-200 dark:text-white"
+	>
+		<div
+			class="relative mx-auto flex h-full min-h-screen w-full max-w-md flex-col overflow-hidden shadow-2xl"
+		>
+			<!-- Decorative Background Pattern -->
+			<div
+				class="pointer-events-none absolute top-0 left-0 z-0 h-[300px] w-full opacity-20"
+				style="background: radial-gradient(circle at 50% 0%, #137fec 0%, transparent 60%)"
+			></div>
+			<!-- Header Image -->
+			<div class="relative z-10 px-4 pt-4 pb-2">
+				<div
+					class="group relative h-48 w-full overflow-hidden rounded-xl bg-cover bg-center bg-no-repeat shadow-lg"
+					data-alt="Peaceful Japanese minimalist landscape with Mount Fuji and cherry blossoms at sunset"
+					style="
+						background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC0fKQdFf733JKblJGceZMNwh4_nTcXvJxW8a1Y3xX5G7INdnrFoMEf4d105EmwV7Qdwv6pNrDDBREzOxYra8YDmj7GdwJJoeBj6gdIa_f9qf-avvCYRNXVg6OoJr3UziDZl5099LRzxN0lysrKA7twvp6OzekfRoxnmoyuxIB2PxDeYRd29frgiX-arWGu9ibGK3d3nYMpSTd7gHlmkZySmus_O7VZTY0VXUbeCJDmTK3xRKhZwvntJ8rj1L8X9UXsVn3VYOT9kR4');
+					"
+				>
+					<div
+						class="from-background-dark/80 absolute inset-0 bg-gradient-to-t to-transparent"
+					></div>
+					<div class="absolute bottom-4 left-4 flex items-center gap-2">
+						<span class="material-symbols-outlined text-3xl text-white">style</span>
+						<span class="text-lg font-bold tracking-wide text-white opacity-90">FlashCard JP</span>
+					</div>
+				</div>
+			</div>
+			<!-- Main Content -->
+			<div class="relative z-10 flex flex-1 flex-col px-6 pt-4 pb-8">
+				<!-- Headline -->
+				<div class="mb-8 text-center">
+					<h1 class="mb-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+						Okaeri
+					</h1>
+					<p class="text-base font-normal text-slate-500 dark:text-slate-400">
+						Master Japanese, one card at a time.
+					</p>
+				</div>
+				<!-- Form -->
+				<form class="flex w-full flex-col gap-5" onsubmit="event.preventDefault()">
+					<!-- Email Field -->
+					<div class="space-y-2">
+						<label class="ml-1 text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
+						<div class="relative flex items-center">
+							<span class="material-symbols-outlined absolute left-4 text-[20px] text-slate-400"
+								>mail</span
+							>
+							<input
+								class="bg-surface-light dark:bg-surface-dark focus:ring-primary/50 focus:border-primary h-12 w-full rounded-lg border border-slate-200 pr-4 pl-11 text-base text-slate-900 placeholder-slate-400 transition-all focus:ring-2 focus:outline-none dark:border-slate-700 dark:text-white dark:placeholder-slate-500"
+								placeholder="Enter your email"
+								type="email"
+							/>
+						</div>
+					</div>
+					<!-- Password Field -->
+					<div class="space-y-2">
+						<div class="ml-1 flex items-center justify-between">
+							<label class="text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
+						</div>
+						<div class="relative flex items-center">
+							<span class="material-symbols-outlined absolute left-4 text-[20px] text-slate-400"
+								>lock</span
+							>
+							<input
+								class="bg-surface-light dark:bg-surface-dark focus:ring-primary/50 focus:border-primary h-12 w-full rounded-lg border border-slate-200 pr-12 pl-11 text-base text-slate-900 placeholder-slate-400 transition-all focus:ring-2 focus:outline-none dark:border-slate-700 dark:text-white dark:placeholder-slate-500"
+								placeholder="Enter your password"
+								type="password"
+							/>
+							<button
+								class="absolute right-3 flex items-center justify-center p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+								type="button"
+							>
+								<span class="material-symbols-outlined text-[20px]">visibility_off</span>
+							</button>
+						</div>
+						<div class="flex justify-end pt-1">
+							<a
+								class="text-primary text-sm font-medium transition-colors hover:text-blue-400"
+								href="#"
+								>Forgot Password?</a
+							>
+						</div>
+					</div>
+					<!-- Sign In Button -->
+					<button
+						class="bg-primary shadow-primary/25 mt-2 flex h-12 w-full transform items-center justify-center gap-2 rounded-lg font-semibold text-white shadow-lg transition-all hover:bg-blue-600 active:scale-[0.98] active:bg-blue-700"
+					>
+						<span>Sign In</span>
+						<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+					</button>
+				</form>
+				<!-- Social Login -->
+				<div class="mt-8 flex flex-col items-center gap-4">
+					<div class="flex w-full items-center gap-4">
+						<div class="h-px flex-1 bg-slate-200 dark:bg-slate-700"></div>
+						<span class="text-xs font-medium tracking-wider text-slate-400 uppercase"
+							>Or continue with</span
+						>
+						<div class="h-px flex-1 bg-slate-200 dark:bg-slate-700"></div>
+					</div>
+					<div class="flex w-full gap-4">
+						<button
+							class="bg-surface-light dark:bg-surface-dark group flex h-12 flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-[#253646]"
+						>
+							<!-- Simulated Google G with text since SVG paths are avoided in component list usually, but standard text is safer here -->
+							<span
+								class="group-hover:text-primary font-medium text-slate-700 transition-colors dark:text-slate-200"
+								>Google</span
+							>
+						</button>
+						<button
+							class="bg-surface-light dark:bg-surface-dark group flex h-12 flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-[#253646]"
+						>
+							<!-- Simulated Apple with text -->
+							<span
+								class="group-hover:text-primary font-medium text-slate-700 transition-colors dark:text-slate-200"
+								>Apple</span
+							>
+						</button>
+					</div>
+				</div>
+				<!-- Footer -->
+				<div class="mt-auto pt-8 text-center">
+					<p class="text-sm text-slate-500 dark:text-slate-400">
+						Don't have an account?
+						<a class="text-primary ml-1 font-semibold hover:text-blue-400" href="#">Sign Up</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
