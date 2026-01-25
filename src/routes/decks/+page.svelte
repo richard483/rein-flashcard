@@ -2,6 +2,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
+	import EmptyStatePanel from '$lib/components/EmptyStatePanel.svelte';
 
 	let isLoggingOut = false;
 	let progressById: Record<string, number> = {};
@@ -109,7 +110,7 @@
 		</div>
 	</header>
 
-	<main class="flex-1 px-4 pb-24 pt-4">
+	<main class="flex-1 px-4 pt-4 pb-24">
 		<div
 			class="mb-6 flex items-start gap-3 rounded-xl border border-[#137fec]/20 bg-gradient-to-r from-[#137fec]/10 to-transparent p-4"
 		>
@@ -125,26 +126,28 @@
 		</div>
 
 		{#if decks.length === 0}
-			<div class="rounded-2xl border border-dashed border-slate-700 bg-[#15202b] p-6 text-center">
-				<p class="text-sm font-semibold text-slate-200">No decks yet</p>
-				<p class="mt-2 text-xs text-slate-400">
-					Import a CSV file to create your first deck.
-				</p>
+			<EmptyStatePanel
+				title="No decks yet"
+				description="Import a CSV file to create your first deck."
+			>
 				<a
-					class="mt-4 inline-flex items-center justify-center rounded-full bg-[#137fec] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-600"
+					slot="action"
+					class="inline-flex items-center justify-center rounded-full bg-[#137fec] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-600"
 					href="/import"
 				>
 					Import CSV
 				</a>
-			</div>
+			</EmptyStatePanel>
 		{:else}
 			<div class="flex flex-col gap-4">
 				{#each decks as deck}
-					<div class="group relative overflow-hidden rounded-2xl border border-slate-800 bg-[#15202b] shadow-sm transition-all hover:shadow-md active:scale-[0.98]">
+					<div
+						class="group relative overflow-hidden rounded-2xl border border-slate-800 bg-[#15202b] shadow-sm transition-all hover:shadow-md active:scale-[0.98]"
+					>
 						<a class="block p-5" href={`/study?deck=${deck.id}`}>
 							<div class="mb-2 flex items-start justify-between">
 								<div>
-									<h2 class="text-lg font-bold text-white leading-tight">{deck.name}</h2>
+									<h2 class="text-lg leading-tight font-bold text-white">{deck.name}</h2>
 									<p class="mt-1 text-sm text-slate-400">{deck.card_count} Cards</p>
 								</div>
 								<span class="material-symbols-outlined text-[20px] text-slate-500">more_horiz</span>
@@ -156,8 +159,7 @@
 										style={`width: ${progressById[deck.id] ?? 0}%;`}
 									></div>
 								</div>
-								<span class="text-sm font-medium text-green-400"
-									>{progressById[deck.id] ?? 0}%</span
+								<span class="text-sm font-medium text-green-400">{progressById[deck.id] ?? 0}%</span
 								>
 							</div>
 						</a>
@@ -179,7 +181,9 @@
 								Delete
 							</button>
 						</div>
-						<div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+						<div
+							class="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"
+						></div>
 					</div>
 				{/each}
 			</div>
@@ -188,7 +192,7 @@
 		<div class="h-24"></div>
 	</main>
 
-	<div class="fixed bottom-6 right-6 z-50">
+	<div class="fixed right-6 bottom-6 z-50">
 		<a
 			aria-label="Create New Deck"
 			class="group flex h-14 w-14 items-center justify-center rounded-full bg-[#137fec] text-white shadow-lg shadow-blue-500/30 transition-all hover:scale-105 hover:bg-blue-600 active:scale-95"

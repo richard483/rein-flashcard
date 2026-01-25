@@ -3,6 +3,11 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import type { PageData } from './$types';
+	import EmptyStatePanel from '$lib/components/EmptyStatePanel.svelte';
+	import StudyActionFooter from '$lib/components/study/StudyActionFooter.svelte';
+	import StudyCard from '$lib/components/study/StudyCard.svelte';
+	import StudyHeader from '$lib/components/study/StudyHeader.svelte';
+	import StudyProgress from '$lib/components/study/StudyProgress.svelte';
 
 	type StudyCard = NonNullable<PageData['cards']>[number];
 
@@ -56,7 +61,14 @@
 			updateActiveCard();
 		}
 	}
-	$: if (browser && deckId && cardCount > 0 && order.length > 0 && !currentCard && sessionPhase !== 'done') {
+	$: if (
+		browser &&
+		deckId &&
+		cardCount > 0 &&
+		order.length > 0 &&
+		!currentCard &&
+		sessionPhase !== 'done'
+	) {
 		mainIndex = 0;
 		sessionPhase = 'main';
 	}
@@ -102,9 +114,9 @@
 			saveState();
 			const candidateId =
 				sessionPhase === 'main'
-					? order[mainIndex] ?? null
+					? (order[mainIndex] ?? null)
 					: sessionPhase === 'stash'
-						? stash[0] ?? null
+						? (stash[0] ?? null)
 						: null;
 			if (candidateId && (currentCard || sessionPhase === 'done')) {
 				return;
@@ -176,11 +188,11 @@
 	function updateActiveCard() {
 		activeId =
 			sessionPhase === 'main'
-				? order[mainIndex] ?? null
+				? (order[mainIndex] ?? null)
 				: sessionPhase === 'stash'
-					? stash[0] ?? null
+					? (stash[0] ?? null)
 					: null;
-		currentCard = activeId ? cardMap.get(activeId) ?? null : null;
+		currentCard = activeId ? (cardMap.get(activeId) ?? null) : null;
 	}
 
 	function skipEasyCards() {
@@ -197,7 +209,6 @@
 			saveState();
 		}
 	}
-
 
 	function handleHard() {
 		const card = currentCard;
@@ -360,83 +371,37 @@
 		return array;
 	}
 
-	function progressValue() {
-		if (cardCount === 0) {
-			return 0;
-		}
-		return Math.min(100, Math.round((completedCount / cardCount) * 100));
-	}
-
-	function progressWidth() {
-		const value = progressValue();
-		if (value === 0) {
-			return 0;
-		}
-		return Math.max(4, value);
-	}
-
 	function handleExit() {
 		goto('/decks');
 	}
-
 </script>
 
-<div class="mx-auto flex min-h-screen w-full max-w-md flex-col overflow-x-hidden bg-[#101922] text-white shadow-2xl">
-	<header class="flex items-center justify-between px-4 pt-6 pb-2">
-		<div class="flex w-12 justify-start">
-			<button
-				class="flex h-10 w-10 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-white/10"
-				type="button"
-				on:click={handleExit}
-			>
-				<span class="material-symbols-outlined">close</span>
-			</button>
-		</div>
-		<h2 class="flex-1 text-center text-lg font-bold tracking-tight text-white">{deckName}</h2>
-		<div class="flex w-12 justify-end">
-			<button
-				class="flex h-10 w-10 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-white/10"
-				type="button"
-			>
-				<span class="material-symbols-outlined">more_horiz</span>
-			</button>
-		</div>
-	</header>
-
-	<div class="flex flex-col gap-2 px-6 py-2">
-		<div class="flex items-end justify-between">
-			<span class="text-xs font-medium uppercase tracking-wider text-slate-400">Session Progress</span>
-			<span class="text-sm font-bold text-green-400">{completedCount}/{cardCount}</span>
-		</div>
-		<div class="h-3 w-full overflow-hidden rounded-full bg-slate-800">
-			<div
-				class="h-full rounded-full bg-green-500 transition-[width] duration-300"
-				style={`width: ${progressWidth()}%;`}
-			></div>
-		</div>
-		{#if stash.length > 0 && sessionPhase !== 'done'}
-			<p class="text-xs text-slate-500">Stash queued: {stash.length}</p>
-		{/if}
-	</div>
+<div
+	class="mx-auto flex min-h-screen w-full max-w-md flex-col overflow-x-hidden bg-[#101922] text-white shadow-2xl"
+>
+	<StudyHeader title={deckName} on:exit={handleExit} />
+	<StudyProgress {completedCount} {cardCount} stashCount={stash.length} {sessionPhase} />
 
 	<main class="relative z-10 flex flex-1 flex-col items-center justify-center p-6">
 		{#if !$page.data.deck}
-			<div class="rounded-2xl border border-dashed border-slate-700 bg-[#15202b] p-6 text-center">
-				<p class="text-sm font-semibold text-slate-200">Deck not found</p>
-				<p class="mt-2 text-xs text-slate-400">Return to your deck list to start a session.</p>
+			<EmptyStatePanel
+				title="Deck not found"
+				description="Return to your deck list to start a session."
+			>
 				<button
-					class="mt-4 inline-flex items-center justify-center rounded-full bg-[#137fec] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-600"
+					slot="action"
+					class="inline-flex items-center justify-center rounded-full bg-[#137fec] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-600"
 					type="button"
 					on:click={handleExit}
 				>
 					Back to decks
 				</button>
-			</div>
+			</EmptyStatePanel>
 		{:else if cardCount === 0}
-			<div class="rounded-2xl border border-dashed border-slate-700 bg-[#15202b] p-6 text-center">
-				<p class="text-sm font-semibold text-slate-200">This deck is empty</p>
-				<p class="mt-2 text-xs text-slate-400">Import more cards to start studying.</p>
-			</div>
+			<EmptyStatePanel
+				title="This deck is empty"
+				description="Import more cards to start studying."
+			/>
 		{:else if sessionPhase === 'done'}
 			<div class="rounded-2xl border border-slate-700 bg-[#15202b] p-6 text-center">
 				<p class="text-lg font-semibold text-white">Yeeay!</p>
@@ -460,85 +425,22 @@
 					</button>
 				</div>
 			</div>
-		{:else}
-			{#if !currentCard}
-				<div class="relative w-full max-h-[500px] aspect-[4/5]">
-					<div
-						class="relative flex h-full w-full flex-col items-center justify-center rounded-3xl border border-slate-700 bg-[#15202b] p-8 text-center"
-					>
-						<p class="text-sm font-semibold text-slate-200">Loading card...</p>
-						<p class="mt-2 text-xs text-slate-400">Please wait a moment.</p>
-					</div>
-				</div>
-			{:else}
-				<button
-					class="relative w-full max-h-[500px] aspect-[4/5] cursor-pointer"
-					type="button"
-					on:click={() => (flipped = !flipped)}
+		{:else if !currentCard}
+			<div class="relative aspect-[4/5] max-h-[500px] w-full">
+				<div
+					class="relative flex h-full w-full flex-col items-center justify-center rounded-3xl border border-slate-700 bg-[#15202b] p-8 text-center"
 				>
-					<div
-						class="relative flex h-full w-full flex-col items-center justify-center rounded-3xl border border-slate-100 bg-white p-8 text-center shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] transition-transform duration-500"
-					>
-						<div class="absolute top-6 right-6">
-							<span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-slate-500"
-								>{flipped ? 'Meaning' : 'Word'}</span
-							>
-						</div>
-						<div class="flex flex-1 flex-col items-center justify-center gap-6">
-							{#if flipped}
-								<h1 class="mt-4 text-4xl font-extrabold text-slate-900">
-									{currentCard.back_text}
-								</h1>
-								{#if currentCard.reading_text}
-									<p class="text-lg font-medium text-[#137fec]">{currentCard.reading_text}</p>
-								{/if}
-							{:else}
-								<h1 class="mt-4 text-6xl font-extrabold text-slate-900">
-									{currentCard.front_text}
-								</h1>
-								<p class="text-lg text-slate-400">Tap to reveal</p>
-							{/if}
-						</div>
-						<div class="absolute bottom-6 flex items-center gap-1 text-sm font-medium text-slate-300">
-							<span class="material-symbols-outlined text-base">touch_app</span>
-							Tap to flip
-						</div>
-					</div>
-					<div
-						class="absolute left-4 top-4 -z-10 h-full w-full rounded-3xl border border-white/5 bg-white/10"
-					></div>
-					<div
-						class="absolute left-8 top-8 -z-20 h-full w-full rounded-3xl border border-white/5 bg-white/5"
-					></div>
-				</button>
-			{/if}
+					<p class="text-sm font-semibold text-slate-200">Loading card...</p>
+					<p class="mt-2 text-xs text-slate-400">Please wait a moment.</p>
+				</div>
+			</div>
+		{:else}
+			<StudyCard card={currentCard} {flipped} on:toggle={() => (flipped = !flipped)} />
 		{/if}
 	</main>
-
-	<footer class="px-8 pt-4 pb-10">
-		<div class="flex items-center justify-center gap-8">
-			<div class="flex flex-col items-center gap-3">
-				<button
-					class="group flex h-16 w-16 items-center justify-center rounded-full bg-red-500 shadow-lg shadow-red-500/20 transition-all hover:bg-red-600 active:scale-95"
-					type="button"
-					on:click={handleHard}
-					disabled={cardCount === 0 || sessionPhase === 'done'}
-				>
-					<span class="material-symbols-outlined text-3xl text-white">close</span>
-				</button>
-				<span class="text-xs font-semibold uppercase tracking-wider text-red-400">Hard</span>
-			</div>
-			<div class="flex flex-col items-center gap-3">
-				<button
-					class="group flex h-16 w-16 items-center justify-center rounded-full bg-green-500 shadow-lg shadow-green-500/20 transition-all hover:bg-green-600 active:scale-95"
-					type="button"
-					on:click={handleEasy}
-					disabled={cardCount === 0 || sessionPhase === 'done'}
-				>
-					<span class="material-symbols-outlined text-3xl text-white">check</span>
-				</button>
-				<span class="text-xs font-semibold uppercase tracking-wider text-green-400">Easy</span>
-			</div>
-		</div>
-	</footer>
+	<StudyActionFooter
+		disabled={cardCount === 0 || sessionPhase === 'done'}
+		on:hard={handleHard}
+		on:easy={handleEasy}
+	/>
 </div>

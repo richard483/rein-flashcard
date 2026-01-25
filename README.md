@@ -14,6 +14,8 @@
 - Fixed DB query error logging to use the configured env values safely.
 - Added pg type definitions and tightened deck/study page typing fallbacks for svelte-check.
 - Constrained DB query typing to pg rows and tightened deck/study card typings for checks.
+- Extracted shared empty-state panel and split study UI into smaller components.
+- Split login/import pages into reusable UI components and added shared message banner.
 - Adjusted study session routing to read deck name from query string.
 - Added client-side password confirmation check on registration.
 - Added server-side auth guard to redirect unauthenticated users to `/login`.
