@@ -19,6 +19,12 @@
 - Switched login hero and favicon to the flashcard-mountain asset.
 - Generated a 32x32 favicon PNG from the mountain image and wired it in.
 - Removed unused `favicon.svg` asset.
+- Preserved newlines and left-aligned text in study cards for multi-line CSV entries.
+- Increased line spacing on study cards so multi-line entries are easier to scan.
+- Added extra spacing only between explicit newline-separated lines on study cards.
+- Treated `<br/>` markers as explicit breaks with extra spacing in study cards.
+- Inserted `<br>` tags between split lines for clearer multi-line rendering.
+- Made first line larger than subsequent lines when breaks are present on study cards.
 - Adjusted study session routing to read deck name from query string.
 - Added client-side password confirmation check on registration.
 - Added server-side auth guard to redirect unauthenticated users to `/login`.
