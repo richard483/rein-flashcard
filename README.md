@@ -25,6 +25,7 @@
 - Treated `<br/>` markers as explicit breaks with extra spacing in study cards.
 - Inserted `<br>` tags between split lines for clearer multi-line rendering.
 - Made first line larger than subsequent lines when breaks are present on study cards.
+- Removed duplicate “Tap to reveal” copy to avoid redundant instructions on study cards.
 - Adjusted study session routing to read deck name from query string.
 - Added client-side password confirmation check on registration.
 - Added server-side auth guard to redirect unauthenticated users to `/login`.
