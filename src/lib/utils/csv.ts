@@ -1,5 +1,10 @@
 export type CsvRow = string[];
 
+function sanitizeCsvValue(value: string) {
+	const normalized = value.replace(/<\s*br\s*\/?\s*>/gi, '<br/>');
+	return normalized.replace(/<(?!br\/>)[^>]*>/gi, '');
+}
+
 export function parseCsv(input: string): CsvRow[] {
 	const rows: CsvRow[] = [];
 	let currentRow: string[] = [];
@@ -25,7 +30,7 @@ export function parseCsv(input: string): CsvRow[] {
 			if (char === '\r' && nextChar === '\n') {
 				i += 1;
 			}
-			currentRow.push(currentField.trim());
+			currentRow.push(sanitizeCsvValue(currentField).trim());
 			currentField = '';
 			if (char !== ',') {
 				if (currentRow.some((value) => value.length > 0)) {
@@ -40,7 +45,7 @@ export function parseCsv(input: string): CsvRow[] {
 	}
 
 	if (currentField.length > 0 || currentRow.length > 0) {
-		currentRow.push(currentField.trim());
+		currentRow.push(sanitizeCsvValue(currentField).trim());
 		if (currentRow.some((value) => value.length > 0)) {
 			rows.push(currentRow);
 		}

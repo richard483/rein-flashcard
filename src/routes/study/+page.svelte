@@ -61,18 +61,6 @@
 			updateActiveCard();
 		}
 	}
-	$: if (
-		browser &&
-		deckId &&
-		cardCount > 0 &&
-		order.length > 0 &&
-		!currentCard &&
-		sessionPhase !== 'done'
-	) {
-		mainIndex = 0;
-		sessionPhase = 'main';
-	}
-
 	type StudyState = {
 		version: number;
 		order: string[];
@@ -112,15 +100,7 @@
 			sessionPhase = normalized.sessionPhase;
 			skipEasyCards();
 			saveState();
-			const candidateId =
-				sessionPhase === 'main'
-					? (order[mainIndex] ?? null)
-					: sessionPhase === 'stash'
-						? (stash[0] ?? null)
-						: null;
-			if (candidateId && (currentCard || sessionPhase === 'done')) {
-				return;
-			}
+			return;
 		}
 
 		const shuffled = shuffle(cards.map((card) => card.id));
@@ -273,6 +253,9 @@
 	}
 
 	function handleReset() {
+		easyIdsList = [];
+		hardIdsList = [];
+		saveProgress();
 		resetSession();
 	}
 

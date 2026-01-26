@@ -17,6 +17,8 @@
 	let errorMessage = '';
 	let successMessage = '';
 	let isReady = false;
+	let isParsing = false;
+	let isUploading = false;
 
 	type DraftCard = { front: string; back: string; reading?: string };
 
@@ -48,6 +50,7 @@
 		successMessage = '';
 		isReady = false;
 		createdDeckId = null;
+		isParsing = false;
 
 		if (!file) {
 			fileName = '';
@@ -62,6 +65,7 @@
 			deckName = file.name.replace(/\.csv$/i, '');
 		}
 		const reader = new FileReader();
+		isParsing = true;
 		reader.onload = () => {
 			const contents = typeof reader.result === 'string' ? reader.result : '';
 			const rows = parseCsv(contents).filter((row) => row.some((cell) => cell.length > 0));
@@ -70,15 +74,18 @@
 				rowCount = 0;
 				previewRows = [];
 				parsedRows = [];
+				isParsing = false;
 				return;
 			}
 			rowCount = rows.length;
 			parsedRows = rows;
 			previewRows = rows.slice(0, 3);
 			isReady = true;
+			isParsing = false;
 		};
 		reader.onerror = () => {
 			errorMessage = 'Unable to read the file.';
+			isParsing = false;
 		};
 		reader.readAsText(file);
 	}
@@ -100,6 +107,7 @@
 			return;
 		}
 
+		isUploading = true;
 		try {
 			const response = await fetch('/api/decks', {
 				method: 'POST',
@@ -121,6 +129,8 @@
 			isReady = false;
 		} catch (error) {
 			errorMessage = error instanceof Error ? error.message : 'Import failed.';
+		} finally {
+			isUploading = false;
 		}
 	}
 
@@ -138,7 +148,7 @@
 		<DeckNameCard bind:deckName />
 
 		<div class="flex flex-col">
-			<CsvUploadBox {fileName} onChange={handleFileChange} />
+			<CsvUploadBox {fileName} isLoading={isParsing} onChange={handleFileChange} />
 		</div>
 
 		<ImportGuidelines />
@@ -152,9 +162,14 @@
 			class="flex h-12 w-full items-center justify-center rounded-xl bg-[#137fec] text-base font-bold text-white shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
 			type="button"
 			on:click={handleImport}
-			disabled={!isReady}
+			disabled={!isReady || isParsing || isUploading}
 		>
-			Import File
+			{#if isUploading}
+				<span class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>
+				Uploading...
+			{:else}
+				Import File
+			{/if}
 		</button>
 
 		{#if createdDeckId}
