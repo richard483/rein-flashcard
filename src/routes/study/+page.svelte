@@ -255,6 +255,8 @@
 	function handleReset() {
 		easyIdsList = [];
 		hardIdsList = [];
+		easyIdsSet = new Set();
+		hardIdsSet = new Set();
 		saveProgress();
 		resetSession();
 	}
