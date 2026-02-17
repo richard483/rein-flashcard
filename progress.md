@@ -9,6 +9,10 @@
 
 ## Progress log
 
+- Fixed study session restore to resume stashed cards without resetting to the main deck.
+- Sanitized CSV import to strip HTML except normalized `<br/>` tags.
+- Added loading indicators for CSV parsing and upload actions.
+- Restart session now clears persisted progress and restarts in one click.
 - Refactored CSV import card parsing into a helper and cleaned up the fetch payload formatting.
 - Simplified deck progress reload logic to depend only on deck data changes.
 - Fixed DB query error logging to use the configured env values safely.
