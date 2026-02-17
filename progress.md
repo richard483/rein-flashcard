@@ -1,4 +1,4 @@
-# FlashCard JP (SvelteKit)
+# FlashCard (SvelteKit)
 
 ## Project status
 
