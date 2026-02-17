@@ -3,7 +3,7 @@
 
 	export let title: string;
 
-	const dispatch = createEventDispatcher<{ exit: void }>();
+	const dispatch = createEventDispatcher<{ exit: void; shuffle: void }>();
 </script>
 
 <header class="flex items-center justify-between px-4 pt-6 pb-2">
@@ -21,8 +21,9 @@
 		<button
 			class="flex h-10 w-10 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-white/10"
 			type="button"
+			on:click={() => dispatch('shuffle')}
 		>
-			<span class="material-symbols-outlined">more_horiz</span>
+			<span class="material-symbols-outlined">shuffle</span>
 		</button>
 	</div>
 </header>

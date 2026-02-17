@@ -277,14 +277,12 @@
 	}
 
 	function resetSession() {
-		order = sanitizeOrder(cards.map((card) => card.id));
-		mainIndex = 0;
-		stash = [];
-		sessionPhase = 'main';
-		flipped = false;
-		skipEasyCards();
-		updateActiveCard();
-		saveState();
+		if (!browser || !deckId) return;
+
+		localStorage.removeItem(stateKey());
+		localStorage.removeItem(progressKey());
+
+		window.location.reload();
 	}
 
 	function loadState(): StudyState | null {
@@ -374,12 +372,21 @@
 	function handleExit() {
 		goto('/decks');
 	}
+
+	function handleShuffle() {
+		order = shuffle(cards.map((card) => card.id));
+		mainIndex = 0;
+		flipped = false;
+		skipEasyCards();
+		updateActiveCard();
+		saveState();
+	}
 </script>
 
 <div
 	class="mx-auto flex min-h-screen w-full max-w-md flex-col overflow-x-hidden bg-[#101922] text-white shadow-2xl"
 >
-	<StudyHeader title={deckName} on:exit={handleExit} />
+	<StudyHeader title={deckName} on:exit={handleExit} on:shuffle={handleShuffle} />
 	<StudyProgress {completedCount} {cardCount} stashCount={stash.length} {sessionPhase} />
 
 	<main class="relative z-10 flex flex-1 flex-col items-center justify-center p-6">
