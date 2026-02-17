@@ -25,17 +25,19 @@
 	on:click={() => dispatch('toggle')}
 >
 	<div
-		class="relative flex h-full w-full flex-col items-start justify-center rounded-3xl border border-slate-100 bg-white p-8 text-left shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] transition-transform duration-500"
+		class="relative flex h-full w-full flex-col rounded-3xl border border-slate-100 bg-white p-8 pb-16 text-left shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] transition-transform duration-500"
 	>
-		<div class="absolute top-6 right-6">
+		<div class="absolute top-6 right-6 z-10">
 			<span
 				class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold tracking-wide text-slate-500 uppercase"
 				>{flipped ? 'Meaning' : 'Word'}</span
 			>
 		</div>
-		<div class="flex w-full flex-1 flex-col items-start justify-center gap-6">
+		<div
+			class="custom-scrollbar flex w-full flex-1 items-start justify-center overflow-y-auto pt-16"
+		>
 			{#if flipped}
-				<h1 class="mt-4 text-4xl font-extrabold text-slate-900">
+				<h1 class="text-4xl font-extrabold text-slate-900">
 					{#each splitLines(card.back_text) as line, index}
 						{#if index > 0}
 							<br />
@@ -54,7 +56,7 @@
 					</p>
 				{/if}
 			{:else}
-				<h1 class="mt-4 text-6xl font-extrabold text-slate-900">
+				<h1 class="text-6xl font-extrabold text-slate-900">
 					{#each splitLines(card.front_text) as line, index}
 						{#if index > 0}
 							<br />
@@ -64,7 +66,9 @@
 				</h1>
 			{/if}
 		</div>
-		<div class="absolute bottom-6 flex items-center gap-1 text-sm font-medium text-slate-300">
+		<div
+			class="absolute right-0 bottom-6 left-0 flex items-center justify-center gap-1 text-sm font-medium text-slate-300"
+		>
 			<span class="material-symbols-outlined text-base">touch_app</span>
 			Tap to flip
 		</div>

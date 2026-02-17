@@ -1,6 +1,6 @@
-# FlashCard JP (SvelteKit)
+# FlashCard (SvelteKit)
 
-FlashCard JP is a SvelteKit app for importing CSV vocab lists and studying them as flashcards. It supports SSR auth via a Karasu Auth API, server-side deck persistence in PostgreSQL, and a focused study session UI with progress tracking.
+FlashCard is a SvelteKit app for importing CSV vocab lists and studying them as flashcards. It supports SSR auth via a Karasu Auth API, server-side deck persistence in PostgreSQL, and a focused study session UI with progress tracking.
 
 ## Features
 

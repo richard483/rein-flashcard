@@ -1,7 +1,7 @@
 <script lang="ts">
 	import heroImage from '$lib/assets/flashcard-mountain.png';
 
-	export let brandName = 'FlashCard JP';
+	export let brandName = 'FlashCard';
 	export let heading = 'Okaeri';
 	export let subheading = 'Master Japanese, one card at a time.';
 	export let backgroundUrl = heroImage;
