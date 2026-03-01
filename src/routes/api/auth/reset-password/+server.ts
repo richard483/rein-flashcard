@@ -6,16 +6,16 @@ const AUTH_BASE_URL = env.PRIVATE_AUTH_BASE_URL || 'http://222.222.1.104:30025';
 export async function POST({ request }) {
 	try {
 		const body = await request.json();
-		const { token, new_password } = body;
+		const { token, password, confirm_password } = body;
 
-		if (!token || !new_password) {
+		if (!token || !password || !confirm_password) {
 			return json({ message: 'Token and new password are required' }, { status: 400 });
 		}
 
 		const response = await fetch(`${AUTH_BASE_URL}/auth/reset-password`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ token, new_password })
+			body: JSON.stringify({ token, password, confirm_password })
 		});
 
 		const data = await response.json();
