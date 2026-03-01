@@ -39,7 +39,7 @@
 			const response = await fetch('/api/auth/reset-password', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ token, new_password: newPassword })
+				body: JSON.stringify({ token, password: newPassword, confirm_password: newPassword })
 			});
 
 			if (!response.ok) {
