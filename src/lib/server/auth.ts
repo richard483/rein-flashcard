@@ -104,10 +104,19 @@ export async function resendVerification(email: string, fetcher: typeof fetch = 
 	);
 }
 
-export async function forgotPassword(email: string, fetcher: typeof fetch = fetch) {
+export async function forgotPassword(
+	email: string,
+	redirectUrl?: string,
+	fetcher: typeof fetch = fetch
+) {
+	const body: Record<string, string> = { email };
+	if (redirectUrl) {
+		body.redirect_url = redirectUrl;
+	}
+
 	return authRequest<AuthApiResponse<ForgotPasswordResponse>>(
 		'/auth/forgot-password',
-		{ email },
+		body,
 		fetcher
 	);
 }

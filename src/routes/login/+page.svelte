@@ -17,6 +17,12 @@
 	let isSubmitting = false;
 	let resetToken = '';
 
+	function getPasswordResetRedirectUrl() {
+		const redirectUrl = new URL('/reset-password', window.location.origin);
+		redirectUrl.searchParams.delete('token');
+		return redirectUrl.toString();
+	}
+
 	async function handleSubmit() {
 		errorMessage = '';
 		successMessage = '';
@@ -67,7 +73,7 @@
 				const response = await fetch('/api/auth/forgot-password', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ email })
+					body: JSON.stringify({ email, redirect_url: getPasswordResetRedirectUrl() })
 				});
 				if (!response.ok) {
 					const payload = (await response.json()) as { message?: string };
