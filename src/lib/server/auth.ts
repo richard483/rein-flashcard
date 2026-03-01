@@ -124,7 +124,7 @@ export async function forgotPassword(
 export async function resetPassword(token: string, newPassword: string, fetcher: typeof fetch = fetch) {
 	return authRequest<AuthApiResponse<ResetPasswordResponse>>(
 		'/auth/reset-password',
-		{ token, new_password: newPassword },
+		{ token, password: newPassword, confirm_password: newPassword },
 		fetcher
 	);
 }
