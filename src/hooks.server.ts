@@ -1,7 +1,7 @@
 import type { Handle } from '@sveltejs/kit';
 import { authRequest, type AuthApiResponse } from '$lib/server/auth';
 
-const publicPaths = ['/login'];
+const publicPaths = ['/login', '/reset-password'];
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const pathname = event.url.pathname;
