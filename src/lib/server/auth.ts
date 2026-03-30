@@ -17,18 +17,46 @@ export type AuthLoginData = {
 	user: {
 		id: string;
 		username: string;
+		email?: string;
+		email_verified?: boolean;
 		is_active?: boolean;
 	};
+};
+
+export type RegisterData = {
+	user_id: string;
+	username: string;
+	email: string;
+	message: string;
+};
+
+export type VerifyEmailResponse = {
+	message: string;
+	email_verified: boolean;
+};
+
+export type ForgotPasswordResponse = {
+	message: string;
+};
+
+export type ResetPasswordResponse = {
+	message: string;
+	password_reset: boolean;
 };
 
 export async function authRequest<T>(
 	path: string,
 	body: Record<string, unknown>,
-	fetcher: typeof fetch = fetch
+	fetcher: typeof fetch = fetch,
+	options?: {
+		noAuth?: boolean;
+	}
 ) {
+	const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+
 	const response = await fetcher(`${baseUrl}${path}`, {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
+		headers,
 		body: JSON.stringify(body)
 	});
 
@@ -43,4 +71,60 @@ export async function authRequest<T>(
 	}
 
 	return payload;
+}
+
+export async function register(
+	username: string,
+	password: string,
+	confirmPassword: string,
+	email: string,
+	fetcher: typeof fetch = fetch
+) {
+	return authRequest<AuthApiResponse<RegisterData>>(
+		'/auth/register',
+		{
+			user_name: username,
+			password,
+			confirm_password: confirmPassword,
+			email
+		},
+		fetcher
+	);
+}
+
+export async function verifyEmail(token: string, fetcher: typeof fetch = fetch) {
+	return authRequest<AuthApiResponse<VerifyEmailResponse>>('/auth/verify-email', { token }, fetcher);
+}
+
+export async function resendVerification(email: string, fetcher: typeof fetch = fetch) {
+	return authRequest<AuthApiResponse<{ message: string }>>(
+		'/auth/resend-verification',
+		{ email },
+		fetcher
+	);
+}
+
+export async function forgotPassword(
+	email: string,
+	redirectUrl?: string,
+	fetcher: typeof fetch = fetch
+) {
+	const body: Record<string, string> = { email };
+	if (redirectUrl) {
+		body.redirect_url = redirectUrl;
+	}
+
+	return authRequest<AuthApiResponse<ForgotPasswordResponse>>(
+		'/auth/forgot-password',
+		body,
+		fetcher
+	);
+}
+
+export async function resetPassword(token: string, newPassword: string, fetcher: typeof fetch = fetch) {
+	return authRequest<AuthApiResponse<ResetPasswordResponse>>(
+		'/auth/reset-password',
+		{ token, password: newPassword, confirm_password: newPassword },
+		fetcher
+	);
 }
