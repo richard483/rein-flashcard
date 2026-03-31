@@ -18,6 +18,21 @@
 		return value.replace(/<br\s*\/?>/gi, '\n').split('\n');
 	}
 
+	function stripCardPrefix(line: string) {
+		return line.replace(/^(KANJI|VOCAB):/, '').trim();
+	}
+
+	function getFrontLabel(frontText: string) {
+		const firstLine = splitLines(frontText)[0] ?? '';
+		if (firstLine.startsWith('KANJI:')) {
+			return 'Kanji';
+		}
+		if (firstLine.startsWith('VOCAB:')) {
+			return 'Vocab';
+		}
+		return 'Word';
+	}
+
 	function handleToggle() {
 		const selection = globalThis.getSelection?.();
 		if (selection && selection.toString().trim().length > 0) {
@@ -47,7 +62,7 @@
 		<div class="absolute top-6 right-6 z-10">
 			<span
 				class="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold tracking-wide text-slate-500 uppercase"
-				>{flipped ? 'Meaning' : 'Word'}</span
+				>{flipped ? 'Meaning' : getFrontLabel(card.front_text)}</span
 			>
 		</div>
 		<div
@@ -78,7 +93,9 @@
 						{#if index > 0}
 							<br />
 						{/if}
-						<span class={`block ${index === 0 ? 'text-6xl' : 'mt-3 text-3xl'}`}>{line}</span>
+						<span class={`block ${index === 0 ? 'text-6xl' : 'mt-3 text-3xl'}`}>
+							{index === 0 ? stripCardPrefix(line) : line}
+						</span>
 					{/each}
 				</h1>
 			{/if}
