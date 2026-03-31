@@ -19,14 +19,15 @@ export const GET: RequestHandler = async ({ request, fetch, url }) => {
 		card_count: number;
 		source: string | null;
 		source_updated_at: string | null;
+		card_layout: string;
 	}>(
-		`select d.id, d.name, d.source, d.source_updated_at, count(c.id)::int as card_count
+		`select d.id, d.name, d.source, d.source_updated_at, d.card_layout, count(c.id)::int as card_count
 		 from flashcard_decks d
 		 left join flashcards c on c.deck_id = d.id
 		 where d.user_id = $1
 		   and d.source is not null
 		   and ($2::text is null or d.source = $2)
-		 group by d.id
+		 group by d.id, d.name, d.source, d.source_updated_at, d.card_layout, d.updated_at, d.created_at
 		 order by d.updated_at desc, d.created_at desc`,
 		[user.id, source]
 	);

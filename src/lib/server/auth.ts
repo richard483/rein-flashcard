@@ -13,6 +13,10 @@ export function getAuthBaseUrl() {
 }
 
 const baseUrl = getAuthBaseUrl();
+const TOKEN_CACHE_TTL_MS = 60_000;
+const TOKEN_CACHE_MAX_ENTRIES = 500;
+
+const tokenCache = new Map<string, { user: { id: string; username: string }; expiresAt: number }>();
 
 export type AuthApiResponse<T> = {
 	status: number;
@@ -63,6 +67,22 @@ function getMessage(payload: unknown) {
 		return String((payload as { message?: string }).message ?? 'Request failed');
 	}
 	return 'Request failed';
+}
+
+function pruneTokenCache(now = Date.now()) {
+	for (const [token, entry] of tokenCache) {
+		if (entry.expiresAt <= now) {
+			tokenCache.delete(token);
+		}
+	}
+
+	while (tokenCache.size > TOKEN_CACHE_MAX_ENTRIES) {
+		const oldestKey = tokenCache.keys().next().value;
+		if (!oldestKey) {
+			break;
+		}
+		tokenCache.delete(oldestKey);
+	}
 }
 
 async function readJsonResponse<T>(response: Response) {
@@ -210,6 +230,15 @@ export async function validateToken(
 		return null;
 	}
 
+	const now = Date.now();
+	const cached = tokenCache.get(accessToken);
+	if (cached && cached.expiresAt > now) {
+		return cached.user;
+	}
+	if (cached) {
+		tokenCache.delete(accessToken);
+	}
+
 	try {
 		const payload = await requestJson<unknown>(
 			'/auth/me',
@@ -222,7 +251,16 @@ export async function validateToken(
 			fetcher
 		);
 
-		return extractUser(payload);
+		const user = extractUser(payload);
+		if (user) {
+			pruneTokenCache(now);
+			tokenCache.set(accessToken, {
+				user,
+				expiresAt: now + TOKEN_CACHE_TTL_MS
+			});
+		}
+
+		return user;
 	} catch {
 		return null;
 	}

@@ -12,8 +12,9 @@ async function getDeck(id: string, userId: string) {
 		name: string;
 		source: string | null;
 		source_updated_at: string | null;
+		card_layout: string;
 	}>(
-		`select id, name, source, source_updated_at
+		`select id, name, source, source_updated_at, card_layout
 		 from flashcard_decks
 		 where id = $1 and user_id = $2 and source is not null`,
 		[id, userId]
@@ -59,15 +60,17 @@ export const PUT: RequestHandler = async ({ request, fetch, params }) => {
 	const payload = await request.json().catch(() => null);
 	const body = parseRenameDeckBody(payload);
 	if (!body) {
-		return jsonResponse({ message: 'Name is required' }, 400);
+		return jsonResponse({ message: 'At least one valid update is required' }, 400);
 	}
 
 	const rows = await query<{ id: string }>(
 		`update flashcard_decks
-		 set name = $1, updated_at = now()
-		 where id = $2 and user_id = $3 and source is not null
+		 set name = coalesce($1, name),
+		     card_layout = coalesce($2, card_layout),
+		     updated_at = now()
+		 where id = $3 and user_id = $4 and source is not null
 		 returning id`,
-		[body.name, params.id, user.id]
+		[body.name ?? null, body.card_layout ?? null, params.id, user.id]
 	);
 
 	if (rows.length === 0) {

@@ -2,6 +2,8 @@
 // for information about these interfaces
 declare global {
 	namespace App {
+		type CardLayout = 'character-front' | 'meaning-front' | 'reading-front';
+
 		// interface Error {}
 		interface PageData {
 			user: { id: string; username: string } | null;
@@ -18,6 +20,7 @@ declare global {
 				name: string;
 				source?: string | null;
 				source_updated_at?: string | null;
+				card_layout?: CardLayout;
 			} | null;
 			cards?: {
 				id: string;

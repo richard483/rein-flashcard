@@ -1,9 +1,18 @@
 import { validateToken } from '$lib/server/auth';
 
+export const CARD_LAYOUTS = ['character-front', 'meaning-front', 'reading-front'] as const;
+
+export type CardLayout = (typeof CARD_LAYOUTS)[number];
+
 export type ExternalDeckCard = {
 	front: string;
 	back: string;
 	reading?: string;
+};
+
+type ExternalDeckUpdate = {
+	name?: string;
+	card_layout?: CardLayout;
 };
 
 export function jsonResponse(body: Record<string, unknown>, status = 200) {
@@ -79,8 +88,25 @@ export function parseRenameDeckBody(body: unknown) {
 		return null;
 	}
 
-	const name = normalizeText((body as Record<string, unknown>).name);
-	return name ? { name } : null;
+	const record = body as Record<string, unknown>;
+	const name = normalizeText(record.name);
+	const hasCardLayout = 'card_layout' in record;
+	const cardLayout = normalizeCardLayout(record.card_layout);
+	const updates: ExternalDeckUpdate = {};
+
+	if (hasCardLayout && !cardLayout) {
+		return null;
+	}
+
+	if (name) {
+		updates.name = name;
+	}
+
+	if (cardLayout) {
+		updates.card_layout = cardLayout;
+	}
+
+	return Object.keys(updates).length > 0 ? updates : null;
 }
 
 export function parseCardBody(body: unknown): ExternalDeckCard | null {
@@ -102,4 +128,10 @@ export function parseCardBody(body: unknown): ExternalDeckCard | null {
 		back,
 		...(reading ? { reading } : {})
 	};
+}
+
+export function normalizeCardLayout(value: unknown): CardLayout | null {
+	return typeof value === 'string' && CARD_LAYOUTS.includes(value as CardLayout)
+		? (value as CardLayout)
+		: null;
 }

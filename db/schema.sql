@@ -7,6 +7,7 @@ create table if not exists flashcard_decks (
 	description text,
 	source text default null,
 	source_updated_at timestamptz not null default now(),
+	card_layout text not null default 'character-front',
 	created_at timestamptz not null default now(),
 	updated_at timestamptz not null default now()
 );

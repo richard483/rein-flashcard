@@ -460,7 +460,12 @@
 				</div>
 			</div>
 		{:else}
-			<StudyCard card={currentCard} {flipped} on:toggle={() => (flipped = !flipped)} />
+			<StudyCard
+				card={currentCard}
+				{flipped}
+				layout={$page.data.deck?.card_layout ?? 'character-front'}
+				on:toggle={() => (flipped = !flipped)}
+			/>
 		{/if}
 	</main>
 	<StudyActionFooter

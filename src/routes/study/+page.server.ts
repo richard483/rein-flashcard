@@ -14,8 +14,11 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 		name: string;
 		source: string | null;
 		source_updated_at: string | null;
+		card_layout: string;
 	}>(
-		`select id, name, source, source_updated_at from flashcard_decks where id = $1 and user_id = $2`,
+		`select id, name, source, source_updated_at, card_layout
+		 from flashcard_decks
+		 where id = $1 and user_id = $2`,
 		[deckId, userId]
 	);
 
