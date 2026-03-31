@@ -2,9 +2,15 @@ import type { Handle } from '@sveltejs/kit';
 import { authRequest, type AuthApiResponse } from '$lib/server/auth';
 
 const publicPaths = ['/login', '/reset-password'];
+const bearerApiPrefixes = ['/api/decks/external'];
+
+function matchesPrefix(pathname: string, prefix: string) {
+	return pathname === prefix || pathname.startsWith(`${prefix}/`);
+}
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const pathname = event.url.pathname;
+	const hasBearerToken = /^Bearer\s+\S+/i.test(event.request.headers.get('authorization') ?? '');
 
 	if (
 		pathname.startsWith('/_app') ||
@@ -13,6 +19,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 		pathname === '/flashcards.csv' ||
 		pathname === '/favicon.ico'
 	) {
+		return resolve(event);
+	}
+
+	if (hasBearerToken && bearerApiPrefixes.some((prefix) => matchesPrefix(pathname, prefix))) {
 		return resolve(event);
 	}
 
