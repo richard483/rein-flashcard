@@ -44,33 +44,58 @@ export type ResetPasswordResponse = {
 	password_reset: boolean;
 };
 
-export async function authRequest<T>(
-	path: string,
-	body: Record<string, unknown>,
-	fetcher: typeof fetch = fetch,
-	options?: {
-		noAuth?: boolean;
+type JsonRecord = Record<string, unknown>;
+
+function getMessage(payload: unknown) {
+	if (payload && typeof payload === 'object' && 'message' in payload) {
+		return String((payload as { message?: string }).message ?? 'Request failed');
 	}
+	return 'Request failed';
+}
+
+async function readJsonResponse<T>(response: Response) {
+	const text = await response.text();
+
+	if (!text) {
+		return null as T | null;
+	}
+
+	try {
+		return JSON.parse(text) as T;
+	} catch {
+		return text as T;
+	}
+}
+
+async function requestJson<T>(
+	path: string,
+	init: RequestInit,
+	fetcher: typeof fetch = fetch
 ) {
-	const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-
-	const response = await fetcher(`${baseUrl}${path}`, {
-		method: 'POST',
-		headers,
-		body: JSON.stringify(body)
-	});
-
-	const payload = (await response.json()) as T;
+	const response = await fetcher(`${baseUrl}${path}`, init);
+	const payload = await readJsonResponse<T>(response);
 
 	if (!response.ok) {
-		const message =
-			payload && typeof payload === 'object' && 'message' in payload
-				? String((payload as { message?: string }).message ?? 'Request failed')
-				: 'Request failed';
-		throw new Error(message);
+		throw new Error(getMessage(payload));
 	}
 
 	return payload;
+}
+
+export async function authRequest<T>(
+	path: string,
+	body: Record<string, unknown>,
+	fetcher: typeof fetch = fetch
+) {
+	return requestJson<T>(
+		path,
+		{
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(body)
+		},
+		fetcher
+	);
 }
 
 export async function register(
@@ -127,4 +152,66 @@ export async function resetPassword(token: string, newPassword: string, fetcher:
 		{ token, password: newPassword, confirm_password: newPassword },
 		fetcher
 	);
+}
+
+function extractUser(payload: unknown): { id: string; username: string } | null {
+	const candidate = (() => {
+		if (!payload || typeof payload !== 'object') {
+			return null;
+		}
+
+		const record = payload as JsonRecord;
+		if (record.data && typeof record.data === 'object') {
+			const data = record.data as JsonRecord;
+			if (data.user && typeof data.user === 'object') {
+				return data.user as JsonRecord;
+			}
+			return data;
+		}
+
+		if (record.user && typeof record.user === 'object') {
+			return record.user as JsonRecord;
+		}
+
+		return record;
+	})();
+
+	if (!candidate) {
+		return null;
+	}
+
+	const id = candidate.id ?? candidate.user_id;
+	const username = candidate.username ?? candidate.user_name;
+
+	if (typeof id !== 'string' || typeof username !== 'string' || !id || !username) {
+		return null;
+	}
+
+	return { id, username };
+}
+
+export async function validateToken(
+	accessToken: string,
+	fetcher: typeof fetch = fetch
+): Promise<{ id: string; username: string } | null> {
+	if (!accessToken.trim()) {
+		return null;
+	}
+
+	try {
+		const payload = await requestJson<unknown>(
+			'/auth/me',
+			{
+				method: 'GET',
+				headers: {
+					Authorization: `Bearer ${accessToken}`
+				}
+			},
+			fetcher
+		);
+
+		return extractUser(payload);
+	} catch {
+		return null;
+	}
 }
