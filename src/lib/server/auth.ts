@@ -1,6 +1,18 @@
 import { env } from '$env/dynamic/private';
 
-const baseUrl = (env.PRIVATE_AUTH_BASE_URL || 'http://222.222.1.104:30025').replace(/\/$/, '');
+const DEFAULT_AUTH_BASE_URL = 'https://auth.nephren.xyz';
+const LEGACY_INTERNAL_AUTH_BASE_URL = 'http://222.222.1.104:30025';
+
+export function getAuthBaseUrl() {
+	const configuredUrl = (env.PRIVATE_AUTH_BASE_URL || '').replace(/\/$/, '');
+	if (!configuredUrl || configuredUrl === LEGACY_INTERNAL_AUTH_BASE_URL) {
+		return DEFAULT_AUTH_BASE_URL;
+	}
+
+	return configuredUrl;
+}
+
+const baseUrl = getAuthBaseUrl();
 
 export type AuthApiResponse<T> = {
 	status: number;
