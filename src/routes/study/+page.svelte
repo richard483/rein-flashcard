@@ -28,19 +28,24 @@
 	let hardIdsSet = new Set<string>();
 	let activeId: string | null = null;
 	let currentCard: StudyCard | null = null;
+	let deckSourceUpdatedAt = '';
 
 	const stateVersion = 1;
 	let initializedDeckId = '';
 	let initializedCount = 0;
 
-	$: if (browser && deckId && cardMap.size > 0) {
-		loadProgress();
-	}
 	$: deckName = $page.data.deck?.name ?? 'JLPT N5 Core';
 	$: deckId = $page.data.deck?.id ?? $page.url.searchParams.get('deck') ?? '';
 	$: cards = $page.data.cards ?? [];
 	$: cardCount = cards.length;
 	$: cardMap = new Map(cards.map((card) => [card.id, card]));
+	$: deckSourceUpdatedAt = $page.data.deck?.source_updated_at ?? '';
+	$: if (browser && deckId) {
+		checkForExternalChanges();
+	}
+	$: if (browser && deckId && cardMap.size > 0) {
+		loadProgress();
+	}
 	$: easyIdsSet = new Set(easyIdsList);
 	$: hardIdsSet = new Set(hardIdsList);
 	$: completedCount = Math.min(easyIdsList.length, cardCount);
@@ -325,6 +330,30 @@
 		}
 	}
 
+	function checkForExternalChanges() {
+		if (!browser || !deckId || !deckSourceUpdatedAt) {
+			return;
+		}
+
+		const storedTimestamp = localStorage.getItem(sourceUpdatedKey());
+		if (storedTimestamp && storedTimestamp !== deckSourceUpdatedAt) {
+			localStorage.removeItem(stateKey());
+			localStorage.removeItem(progressKey());
+			order = [];
+			mainIndex = 0;
+			stash = [];
+			easyIdsList = [];
+			hardIdsList = [];
+			sessionPhase = 'main';
+			flipped = false;
+			initializedDeckId = '';
+			initializedCount = 0;
+			updateActiveCard();
+		}
+
+		localStorage.setItem(sourceUpdatedKey(), deckSourceUpdatedAt);
+	}
+
 	function saveProgress() {
 		if (!browser || !deckId) {
 			return;
@@ -343,6 +372,10 @@
 
 	function progressKey() {
 		return `study_progress_${deckId}`;
+	}
+
+	function sourceUpdatedKey() {
+		return `study_source_updated_${deckId}`;
 	}
 
 	function shuffle(list: string[]) {

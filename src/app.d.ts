@@ -5,8 +5,20 @@ declare global {
 		// interface Error {}
 		interface PageData {
 			user: { id: string; username: string } | null;
-			decks?: { id: string; name: string; created_at: string; card_count: number }[];
-			deck?: { id: string; name: string } | null;
+			decks?: {
+				id: string;
+				name: string;
+				created_at: string;
+				card_count: number;
+				source?: string | null;
+				source_updated_at?: string | null;
+			}[];
+			deck?: {
+				id: string;
+				name: string;
+				source?: string | null;
+				source_updated_at?: string | null;
+			} | null;
 			cards?: {
 				id: string;
 				front_text: string;

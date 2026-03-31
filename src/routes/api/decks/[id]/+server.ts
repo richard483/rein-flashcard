@@ -7,8 +7,13 @@ export const GET: RequestHandler = async ({ cookies, params }) => {
 		return new Response(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });
 	}
 
-	const deckRows = await query<{ id: string; name: string }>(
-		`select id, name from flashcard_decks where id = $1 and user_id = $2`,
+	const deckRows = await query<{
+		id: string;
+		name: string;
+		source: string | null;
+		source_updated_at: string | null;
+	}>(
+		`select id, name, source, source_updated_at from flashcard_decks where id = $1 and user_id = $2`,
 		[params.id, userId]
 	);
 
