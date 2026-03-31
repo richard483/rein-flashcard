@@ -17,14 +17,31 @@ export function normalizeText(value: unknown) {
 	return typeof value === 'string' ? value.trim() : '';
 }
 
-export async function getBearerUser(request: Request, fetcher: typeof fetch) {
-	const authorization = request.headers.get('authorization');
-	const tokenMatch = authorization?.match(/^Bearer\s+(.+)$/i);
-	if (!tokenMatch) {
+function getCookieValue(request: Request, name: string) {
+	const cookieHeader = request.headers.get('cookie');
+	if (!cookieHeader) {
 		return null;
 	}
 
-	return validateToken(tokenMatch[1], fetcher);
+	for (const segment of cookieHeader.split(';')) {
+		const [rawName, ...rawValueParts] = segment.trim().split('=');
+		if (rawName !== name) {
+			continue;
+		}
+
+		const value = rawValueParts.join('=').trim();
+		return value ? decodeURIComponent(value) : null;
+	}
+
+	return null;
+}
+
+export async function getBearerUser(request: Request, fetcher: typeof fetch) {
+	const authorization = request.headers.get('authorization');
+	const tokenMatch = authorization?.match(/^Bearer\s+(.+)$/i);
+	const accessToken = tokenMatch?.[1] ?? getCookieValue(request, 'access_token');
+
+	return accessToken ? validateToken(accessToken, fetcher) : null;
 }
 
 export function parseCreateDeckBody(body: unknown) {
