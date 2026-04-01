@@ -12,8 +12,10 @@ export const GET: RequestHandler = async ({ cookies }) => {
 		name: string;
 		created_at: string;
 		card_count: number;
+		source: string | null;
+		source_updated_at: string | null;
 	}>(
-		`select d.id, d.name, d.created_at, count(c.id)::int as card_count
+		`select d.id, d.name, d.created_at, d.source, d.source_updated_at, count(c.id)::int as card_count
 		 from flashcard_decks d
 		 left join flashcards c on c.deck_id = d.id
 		 where d.user_id = $1
@@ -48,8 +50,8 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 	try {
 		await client.query('begin');
 		const deckResult = await client.query<{ id: string }>(
-			`insert into flashcard_decks (user_id, name)
-			 values ($1, $2)
+			`insert into flashcard_decks (user_id, name, source)
+			 values ($1, $2, null)
 			 returning id`,
 			[userId, body.name]
 		);

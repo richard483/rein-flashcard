@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
+import { getAuthBaseUrl } from '$lib/server/auth';
 
-const AUTH_BASE_URL = env.PRIVATE_AUTH_BASE_URL || 'http://222.222.1.104:30025';
+const AUTH_BASE_URL = getAuthBaseUrl();
 
 	export async function POST({ request }) {
 	try {

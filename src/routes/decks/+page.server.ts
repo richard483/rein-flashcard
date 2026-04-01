@@ -12,8 +12,10 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		name: string;
 		created_at: string;
 		card_count: number;
+		source: string | null;
+		source_updated_at: string | null;
 	}>(
-		`select d.id, d.name, d.created_at, count(c.id)::int as card_count
+		`select d.id, d.name, d.created_at, d.source, d.source_updated_at, count(c.id)::int as card_count
 		 from flashcard_decks d
 		 left join flashcards c on c.deck_id = d.id
 		 where d.user_id = $1

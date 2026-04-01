@@ -5,6 +5,9 @@ create table if not exists flashcard_decks (
 	user_id uuid not null,
 	name text not null,
 	description text,
+	source text default null,
+	source_updated_at timestamptz not null default now(),
+	card_layout text not null default 'character-front',
 	created_at timestamptz not null default now(),
 	updated_at timestamptz not null default now()
 );
@@ -30,4 +33,5 @@ create table if not exists flashcard_imports (
 );
 
 create index if not exists flashcard_decks_user_id_idx on flashcard_decks(user_id);
+create index if not exists flashcard_decks_source_idx on flashcard_decks(source);
 create index if not exists flashcards_deck_id_idx on flashcards(deck_id);

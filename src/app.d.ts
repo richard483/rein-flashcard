@@ -2,11 +2,30 @@
 // for information about these interfaces
 declare global {
 	namespace App {
+		type CardLayout =
+			| 'character-front'
+			| 'character-reading-front'
+			| 'meaning-front'
+			| 'reading-front';
+
 		// interface Error {}
 		interface PageData {
 			user: { id: string; username: string } | null;
-			decks?: { id: string; name: string; created_at: string; card_count: number }[];
-			deck?: { id: string; name: string } | null;
+			decks?: {
+				id: string;
+				name: string;
+				created_at: string;
+				card_count: number;
+				source?: string | null;
+				source_updated_at?: string | null;
+			}[];
+			deck?: {
+				id: string;
+				name: string;
+				source?: string | null;
+				source_updated_at?: string | null;
+				card_layout?: CardLayout;
+			} | null;
 			cards?: {
 				id: string;
 				front_text: string;
