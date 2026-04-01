@@ -2,7 +2,11 @@
 // for information about these interfaces
 declare global {
 	namespace App {
-		type CardLayout = 'character-front' | 'meaning-front' | 'reading-front';
+		type CardLayout =
+			| 'character-front'
+			| 'character-reading-front'
+			| 'meaning-front'
+			| 'reading-front';
 
 		// interface Error {}
 		interface PageData {

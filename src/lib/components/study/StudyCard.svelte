@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 
-	type CardLayout = 'character-front' | 'meaning-front' | 'reading-front';
+	type CardLayout =
+		| 'character-front'
+		| 'character-reading-front'
+		| 'meaning-front'
+		| 'reading-front';
 
 	type StudyCard = {
 		id: string;
@@ -71,6 +75,8 @@
 	$: frontLabel = useLayout
 		? layout === 'character-front'
 			? parsedCard.label
+			: layout === 'character-reading-front'
+				? parsedCard.label
 			: layout === 'meaning-front'
 				? 'Meaning'
 				: 'Reading'
@@ -79,13 +85,19 @@
 	$: frontContent = useLayout
 		? layout === 'character-front'
 			? parsedCard.character
+			: layout === 'character-reading-front'
+				? parsedCard.character
 			: layout === 'meaning-front'
 				? parsedCard.meaning
 				: parsedCard.reading
 		: card.front_text;
+	$: frontSubContent =
+		useLayout && layout === 'character-reading-front' ? parsedCard.reading : '';
 	$: backContent = useLayout
 		? layout === 'character-front'
 			? joinSections([parsedCard.meaning, parsedCard.reading])
+			: layout === 'character-reading-front'
+				? parsedCard.meaning
 			: layout === 'meaning-front'
 				? joinSections([parsedCard.character, parsedCard.reading])
 				: joinSections([parsedCard.character, parsedCard.meaning])
@@ -147,16 +159,28 @@
 					</p>
 				{/if}
 			{:else}
-				<h1 class="text-6xl font-extrabold text-slate-900 select-text">
-					{#each splitLines(frontContent) as line, index}
-						{#if index > 0}
-							<br />
-						{/if}
-						<span class={`block ${index === 0 ? 'text-6xl' : 'mt-3 text-3xl'}`}>
-							{!useLayout && index === 0 ? stripCardPrefix(line) : line}
-						</span>
-					{/each}
-				</h1>
+				<div class="flex flex-col items-center text-center">
+					<h1 class="text-6xl font-extrabold text-slate-900 select-text">
+						{#each splitLines(frontContent) as line, index}
+							{#if index > 0}
+								<br />
+							{/if}
+							<span class={`block ${index === 0 ? 'text-6xl' : 'mt-3 text-3xl'}`}>
+								{!useLayout && index === 0 ? stripCardPrefix(line) : line}
+							</span>
+						{/each}
+					</h1>
+					{#if frontSubContent}
+						<p class="mt-4 text-xl font-medium text-[#137fec] select-text">
+							{#each splitLines(frontSubContent) as line, index}
+								{#if index > 0}
+									<br />
+								{/if}
+								<span class={`block ${index === 0 ? 'text-xl' : 'mt-2 text-lg'}`}>{line}</span>
+							{/each}
+						</p>
+					{/if}
+				</div>
 			{/if}
 		</div>
 		<div

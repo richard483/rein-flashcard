@@ -1,6 +1,11 @@
 import { validateToken } from '$lib/server/auth';
 
-export const CARD_LAYOUTS = ['character-front', 'meaning-front', 'reading-front'] as const;
+export const CARD_LAYOUTS = [
+	'character-front',
+	'character-reading-front',
+	'meaning-front',
+	'reading-front'
+] as const;
 
 export type CardLayout = (typeof CARD_LAYOUTS)[number];
 
